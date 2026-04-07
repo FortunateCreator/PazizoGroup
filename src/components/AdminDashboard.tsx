@@ -17,26 +17,39 @@ import {
   Save,
   Upload,
   Loader2,
-  LayoutDashboard
+  LayoutDashboard,
+  Search,
+  Filter,
+  Trash2,
+  Eye,
+  Download,
+  X
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { OrderStatus } from '../types';
+import { Order, OrderStatus } from '../types';
 
 export default function AdminDashboard() {
-  const { orders, updateOrderStatus } = useOrders();
+  const { orders, updateOrderStatus, deleteOrder } = useOrders();
   const { settings, updateSettings } = useSettings();
   const [activeTab, setActiveTab] = useState<'orders' | 'settings'>('orders');
   const [smsNotification, setSmsNotification] = useState<{ id: string, message: string } | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<OrderStatus | 'All'>('All');
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   
   // Settings Form State
   const [formSettings, setFormSettings] = useState(settings);
   const [isSaving, setIsSaving] = useState(false);
 
+  const deliveryRate = orders.length > 0 
+    ? ((orders.filter(o => o.status === 'Delivered').length / orders.length) * 100).toFixed(1)
+    : '0.0';
+
   const stats = [
     { label: 'Total Revenue', value: `₦${orders.reduce((acc, o) => acc + o.totalPrice, 0).toLocaleString()}`, icon: TrendingUp, color: 'text-pazizo-green' },
-    { label: 'Active Orders', value: orders.filter(o => o.status !== 'Delivered').length, icon: Package, color: 'text-pazizo-gold' },
+    { label: 'Active Orders', value: orders.filter(o => o.status !== 'Delivered' && o.status !== 'Cancelled').length, icon: Package, color: 'text-pazizo-gold' },
     { label: 'Customers', value: new Set(orders.map(o => o.email)).size, icon: Users, color: 'text-blue-500' },
-    { label: 'Delivery Rate', value: '98.4%', icon: BarChart3, color: 'text-purple-500' },
+    { label: 'Delivery Rate', value: `${deliveryRate}%`, icon: BarChart3, color: 'text-purple-500' },
   ];
 
   const handleStatusChange = async (orderId: string, status: OrderStatus) => {
@@ -56,6 +69,50 @@ export default function AdminDashboard() {
     setIsSaving(false);
     alert("Website settings updated successfully! Changes are now live.");
   };
+
+  const handleDeleteOrder = async (orderId: string) => {
+    if (window.confirm(`Are you sure you want to delete order #${orderId}?`)) {
+      await deleteOrder(orderId);
+    }
+  };
+
+  const exportToCSV = () => {
+    const headers = ['Order ID', 'Customer', 'Email', 'Phone', 'State', 'Address', 'Quantity', 'Total Price', 'Status', 'Date'];
+    const rows = orders.map(o => [
+      o.id,
+      o.customerName,
+      o.email,
+      o.phone,
+      o.state,
+      `"${o.address}"`,
+      o.quantity,
+      o.totalPrice,
+      o.status,
+      o.createdAt.toISOString()
+    ]);
+    
+    const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `pazizo_orders_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const filteredOrders = orders.filter(order => {
+    const matchesSearch = 
+      order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.email.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'All' || order.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -123,11 +180,49 @@ export default function AdminDashboard() {
 
           {/* Order Management Table */}
           <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="font-bold text-slate-900">Recent Orders</h3>
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-pazizo-green/10 text-pazizo-green rounded-full">
-                <Clock className="w-4 h-4" />
-                <span className="text-xs font-bold uppercase tracking-wider">Live System</span>
+            <div className="p-6 border-b border-slate-100 space-y-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <h3 className="font-bold text-slate-900">Order Management</h3>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={exportToCSV}
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-200 transition-colors"
+                  >
+                    <Download className="w-4 h-4" />
+                    Export CSV
+                  </button>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-pazizo-green/10 text-pazizo-green rounded-full">
+                    <Clock className="w-4 h-4" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Live System</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <input 
+                    type="text"
+                    placeholder="Search by ID, name or email..."
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-pazizo-green/20 transition-all"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Filter className="text-slate-400 w-4 h-4" />
+                  <select 
+                    className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-pazizo-green/20"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value as any)}
+                  >
+                    <option value="All">All Status</option>
+                    <option value="Processing">Processing</option>
+                    <option value="In Transit">In Transit</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div className="overflow-x-auto">
@@ -139,11 +234,11 @@ export default function AdminDashboard() {
                     <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Location</th>
                     <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Quantity</th>
                     <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Actions</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {orders.map(order => (
+                  {filteredOrders.map(order => (
                     <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-6 py-4">
                         <span className="text-xs font-bold text-slate-900">#{order.id}</span>
@@ -176,7 +271,7 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-end gap-2">
                           <select
                             className="text-xs font-bold bg-slate-100 border-none rounded-lg px-2 py-1 outline-none focus:ring-2 focus:ring-pazizo-green/20"
                             value={order.status}
@@ -187,14 +282,28 @@ export default function AdminDashboard() {
                             <option value="Delivered">Deliver</option>
                             <option value="Cancelled">Cancel</option>
                           </select>
+                          <button 
+                            onClick={() => setSelectedOrder(order)}
+                            className="p-1.5 text-slate-400 hover:text-pazizo-green transition-colors"
+                            title="View Details"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteOrder(order.id)}
+                            className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"
+                            title="Delete Order"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
                       </td>
                     </tr>
                   ))}
-                  {orders.length === 0 && (
+                  {filteredOrders.length === 0 && (
                     <tr>
                       <td colSpan={6} className="px-6 py-12 text-center text-slate-400 font-medium">
-                        No orders to display.
+                        No orders found matching your criteria.
                       </td>
                     </tr>
                   )}
@@ -202,6 +311,94 @@ export default function AdminDashboard() {
               </table>
             </div>
           </div>
+
+          {/* Order Details Modal */}
+          {selectedOrder && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+              <div className="bg-white rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+                <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-900">Order Details</h3>
+                    <p className="text-slate-500 font-medium">#{selectedOrder.id}</p>
+                  </div>
+                  <button 
+                    onClick={() => setSelectedOrder(null)}
+                    className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+                  >
+                    <X className="w-6 h-6 text-slate-400" />
+                  </button>
+                </div>
+                
+                <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto">
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      <div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Customer Information</p>
+                        <div className="space-y-1">
+                          <p className="font-bold text-slate-900">{selectedOrder.customerName}</p>
+                          <p className="text-sm text-slate-600">{selectedOrder.email}</p>
+                          <p className="text-sm text-slate-600">{selectedOrder.phone}</p>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Delivery Address</p>
+                        <div className="space-y-1">
+                          <p className="text-sm font-bold text-slate-900">{selectedOrder.state}</p>
+                          <p className="text-sm text-slate-600 leading-relaxed">{selectedOrder.address}</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Order Summary</p>
+                        <div className="bg-slate-50 rounded-2xl p-4 space-y-3">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-slate-500">Quantity</span>
+                            <span className="font-bold text-slate-900">{selectedOrder.quantity} Liters</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-slate-500">Price per Liter</span>
+                            <span className="font-bold text-slate-900">₦{(selectedOrder.totalPrice / selectedOrder.quantity).toLocaleString()}</span>
+                          </div>
+                          <div className="pt-3 border-t border-slate-200 flex justify-between">
+                            <span className="font-bold text-slate-900">Total Price</span>
+                            <span className="font-bold text-pazizo-green">₦{selectedOrder.totalPrice.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Timeline</p>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-3 text-xs">
+                            <div className="w-2 h-2 rounded-full bg-pazizo-green" />
+                            <span className="text-slate-500">Created:</span>
+                            <span className="font-medium text-slate-900">{selectedOrder.createdAt.toLocaleString()}</span>
+                          </div>
+                          <div className="flex items-center gap-3 text-xs">
+                            <div className="w-2 h-2 rounded-full bg-pazizo-gold" />
+                            <span className="text-slate-500">Last Update:</span>
+                            <span className="font-medium text-slate-900">{selectedOrder.updatedAt.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-8 bg-slate-50/50 border-t border-slate-100 flex justify-end">
+                  <button 
+                    onClick={() => setSelectedOrder(null)}
+                    className="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all"
+                  >
+                    Close Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* SMS Toast Notification */}
           {smsNotification && (

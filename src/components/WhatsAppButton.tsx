@@ -1,6 +1,5 @@
 import React from 'react';
-import { MessageCircle } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useSettings } from '../context/SettingsContext';
 
 export default function WhatsAppButton() {
@@ -10,18 +9,58 @@ export default function WhatsAppButton() {
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
   return (
-    <motion.a
-      href={whatsappUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      className="fixed bottom-8 left-8 z-50 flex items-center gap-3 bg-[#25D366] text-white px-4 py-3 rounded-full shadow-2xl shadow-[#25D366]/30 hover:bg-[#22c35e] transition-colors"
-    >
-      <MessageCircle className="w-6 h-6 fill-current" />
-      <span className="font-bold text-sm">Chat with Us</span>
-    </motion.a>
+    <div className="fixed bottom-8 left-8 z-50 flex flex-col items-start gap-3">
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0, x: -20, scale: 0.8 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ delay: 2 }}
+          className="bg-white px-4 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2"
+        >
+          <div className="w-2 h-2 bg-pazizo-green rounded-full animate-pulse" />
+          <span className="text-xs font-bold text-slate-600 whitespace-nowrap">We're online! Chat with us</span>
+        </motion.div>
+      </AnimatePresence>
+
+      <motion.a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ 
+          scale: 1, 
+          opacity: 1,
+          y: [0, -8, 0]
+        }}
+        transition={{
+          scale: { duration: 0.3 },
+          opacity: { duration: 0.3 },
+          y: {
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }
+        }}
+        whileHover={{ scale: 1.1, y: 0 }}
+        whileTap={{ scale: 0.9 }}
+        className="relative group"
+      >
+        {/* Pulsing Background Glow */}
+        <div className="absolute inset-0 bg-[#25D366] rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-opacity animate-pulse" />
+        
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 256 256" className="relative drop-shadow-2xl">
+          <g transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
+            <linearGradient id="SVGID_1" gradientUnits="userSpaceOnUse" x1="45.1039" y1="72.9567" x2="44.8639" y2="8.3967">
+              <stop offset="0%" stopColor="rgb(0,204,62)" stopOpacity="1"/>
+              <stop offset="100%" stopColor="rgb(1,237,94)" stopOpacity="1"/>
+            </linearGradient>
+            <path d="M 73.26 90 H 16.74 C 7.495 90 0 82.505 0 73.26 V 16.74 C 0 7.495 7.495 0 16.74 0 h 56.52 C 82.505 0 90 7.495 90 16.74 v 56.52 C 90 82.505 82.505 90 73.26 90 z" fill="url(#SVGID_1)" strokeLinecap="round"/>
+            <path d="M 37.403 32.564 c -0.541 -1.201 -1.11 -1.226 -1.624 -1.247 L 34.396 31.3 c -0.481 0 -1.263 0.181 -1.924 0.903 c -0.661 0.722 -2.526 2.468 -2.526 6.018 c 0 3.55 2.586 6.981 2.946 7.463 c 0.36 0.482 4.992 8 12.327 10.892 c 6.095 2.404 7.335 1.926 8.659 1.806 c 1.324 -0.12 4.269 -1.745 4.87 -3.43 c 0.601 -1.685 0.601 -3.129 0.421 -3.43 c -0.18 -0.302 -0.661 -0.481 -1.384 -0.842 c -0.722 -0.361 -4.269 -2.107 -4.931 -2.348 s -1.142 -0.361 -1.624 0.361 c -0.482 0.722 -1.863 2.347 -2.284 2.828 c -0.421 0.482 -0.842 0.542 -1.564 0.181 c -0.722 -0.361 -3.046 -1.123 -5.803 -3.581 c -2.145 -1.913 -3.593 -4.275 -4.015 -4.997 c -0.422 -0.722 -0.045 -1.113 0.317 -1.472 c 0.324 -0.323 0.721 -0.843 1.083 -1.264 c 0.361 -0.421 0.48 -0.722 0.721 -1.203 s 0.12 -0.903 -0.06 -1.264 C 39.446 37.56 38.044 33.991 37.403 32.564" fill="rgb(255,255,255)" fillRule="evenodd" strokeLinecap="round"/>
+            <polygon points="73.5,23.1 66.3,23.1 66.3,15.9 61.35,15.9 61.35,23.1 54.15,23.1 54.15,28.05 61.35,28.05 61.35,35.25 66.3,35.25 66.3,28.05 73.5,28.05 " fill="rgb(255,255,255)"/>
+            <path d="M 67.716 38.13 c 0.597 2.105 0.915 4.296 0.908 6.524 c 0 0 0 0 0 0 s 0 0 0 0 C 68.618 57.885 57.851 68.65 44.621 68.65 h -0.009 c -3.77 -0.002 -7.475 -0.888 -10.811 -2.574 c -0.477 -0.241 -0.945 -0.498 -1.406 -0.771 l -0.877 -0.52 l -9.085 2.382 l 2.425 -8.854 l -0.571 -0.908 c -2.404 -3.825 -3.676 -8.252 -3.669 -12.77 c 0.005 -13.23 10.772 -23.994 24.012 -23.994 c 2.394 -0.006 4.752 0.349 7 1.034 v -5.056 c -2.265 -0.562 -4.614 -0.853 -7.009 -0.854 c -15.919 0 -28.873 12.95 -28.88 28.868 c -0.006 5.066 1.324 10.044 3.855 14.433 l -4.097 14.96 l 15.309 -4.015 c 4.218 2.3 8.967 3.512 13.8 3.514 h 0.013 c 15.916 0 28.872 -12.953 28.879 -28.87 c 0.001 -2.225 -0.254 -4.41 -0.742 -6.526 H 67.716 z" fill="rgb(255,255,255)" strokeLinecap="round"/>
+          </g>
+        </svg>
+      </motion.a>
+    </div>
   );
 }

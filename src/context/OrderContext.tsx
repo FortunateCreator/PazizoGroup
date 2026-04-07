@@ -6,6 +6,7 @@ interface OrderContextType {
   orders: Order[];
   addOrder: (order: Omit<Order, 'id' | 'status' | 'createdAt' | 'updatedAt'>) => Promise<Order>;
   updateOrderStatus: (orderId: string, status: OrderStatus) => Promise<void>;
+  deleteOrder: (orderId: string) => Promise<void>;
   getOrder: (orderId: string) => Order | undefined;
 }
 
@@ -55,12 +56,16 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const deleteOrder = async (orderId: string) => {
+    setOrders(prev => prev.filter(o => o.id !== orderId));
+  };
+
   const getOrder = (orderId: string) => {
     return orders.find(o => o.id === orderId);
   };
 
   return (
-    <OrderContext.Provider value={{ orders, addOrder, updateOrderStatus, getOrder }}>
+    <OrderContext.Provider value={{ orders, addOrder, updateOrderStatus, deleteOrder, getOrder }}>
       {children}
     </OrderContext.Provider>
   );

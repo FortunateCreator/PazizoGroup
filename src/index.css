@@ -8,6 +8,16 @@
   --color-pazizo-green: #008751;
   --color-pazizo-gold: #D4AF37;
   --color-pazizo-white: #FFFFFF;
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+}
+
+@utility animate-shake {
+  animation: shake 0.2s ease-in-out 0s 2;
 }
 
 @layer base {

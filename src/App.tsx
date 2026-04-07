@@ -8,6 +8,7 @@ import {
   MessageSquare, 
   LayoutDashboard,
   X,
+  Menu,
   ChevronRight,
   Loader2
 } from 'lucide-react';
@@ -23,10 +24,98 @@ import { cn } from './lib/utils';
 function MainApp() {
   const [activeTab, setActiveTab] = React.useState<'order' | 'track' | 'admin'>('order');
   const [showConcierge, setShowConcierge] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [showPinModal, setShowPinModal] = React.useState(false);
+  const [pinInput, setPinInput] = React.useState('');
+  const [pinError, setPinError] = React.useState(false);
   const { settings } = useSettings();
+
+  const handleStaffAccess = () => {
+    setShowPinModal(true);
+    setIsMenuOpen(false);
+  };
+
+  const verifyPin = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (pinInput === "PAZIZO2026") {
+      setActiveTab('admin');
+      setShowPinModal(false);
+      setPinInput('');
+      setPinError(false);
+    } else {
+      setPinError(true);
+      setPinInput('');
+      setTimeout(() => setPinError(false), 2000);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* PIN Modal */}
+      <AnimatePresence>
+        {showPinModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100"
+            >
+              <div className="p-8">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+                      <ShieldCheck className="w-6 h-6 text-pazizo-green" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-slate-900">Staff Access</h3>
+                      <p className="text-xs text-slate-500">Enter your secure PIN to continue</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => { setShowPinModal(false); setPinInput(''); setPinError(false); }}
+                    className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                  >
+                    <X className="w-5 h-5 text-slate-400" />
+                  </button>
+                </div>
+
+                <form onSubmit={verifyPin} className="space-y-6">
+                  <div className="relative">
+                    <input
+                      type="password"
+                      value={pinInput}
+                      onChange={(e) => setPinInput(e.target.value)}
+                      placeholder="••••••••"
+                      autoFocus
+                      className={cn(
+                        "w-full px-6 py-4 bg-slate-50 border-2 rounded-2xl text-center text-2xl tracking-[0.5em] font-bold focus:outline-none transition-all",
+                        pinError 
+                          ? "border-red-500 bg-red-50 text-red-500 animate-shake" 
+                          : "border-transparent focus:border-pazizo-green focus:bg-white"
+                      )}
+                    />
+                    {pinError && (
+                      <p className="text-center text-xs font-bold text-red-500 mt-2">Invalid Access PIN</p>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 active:scale-[0.98]"
+                  >
+                    Verify & Access Portal
+                  </button>
+                </form>
+              </div>
+              <div className="bg-slate-50 p-4 text-center">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Secure Admin Gateway</p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -60,14 +149,7 @@ function MainApp() {
               Track
             </button>
             <button 
-              onClick={() => {
-                const pin = prompt("Enter Staff PIN:");
-                if (pin === "PAZIZO2026") {
-                  setActiveTab('admin');
-                } else if (pin !== null) {
-                  alert("Invalid PIN");
-                }
-              }}
+              onClick={handleStaffAccess}
               className={cn(
                 "text-sm font-bold uppercase tracking-wider transition-colors flex items-center gap-1",
                 activeTab === 'admin' ? "text-pazizo-green" : "text-slate-500 hover:text-slate-900"
@@ -83,14 +165,69 @@ function MainApp() {
               <ShieldCheck className="w-4 h-4 text-pazizo-green" />
               <span className="text-xs font-medium text-slate-600">Integrity Verified</span>
             </div>
+            
+            {/* Hamburger Menu Button */}
             <button 
-              onClick={() => setShowConcierge(true)}
-              className="p-2 bg-pazizo-green/10 text-pazizo-green rounded-full hover:bg-pazizo-green/20 transition-colors"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 text-slate-600 hover:text-pazizo-green transition-colors"
             >
-              <MessageSquare className="w-5 h-5" />
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-white border-t border-slate-100 overflow-hidden"
+            >
+              <div className="px-4 py-6 space-y-4">
+                <button 
+                  onClick={() => { setActiveTab('order'); setIsMenuOpen(false); }}
+                  className={cn(
+                    "w-full text-left px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all",
+                    activeTab === 'order' ? "bg-pazizo-green/10 text-pazizo-green" : "text-slate-600 hover:bg-slate-50"
+                  )}
+                >
+                  Order Diesel
+                </button>
+                <button 
+                  onClick={() => { setActiveTab('track'); setIsMenuOpen(false); }}
+                  className={cn(
+                    "w-full text-left px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all",
+                    activeTab === 'track' ? "bg-pazizo-green/10 text-pazizo-green" : "text-slate-600 hover:bg-slate-50"
+                  )}
+                >
+                  Track Delivery
+                </button>
+                <button 
+                  onClick={handleStaffAccess}
+                  className={cn(
+                    "w-full text-left px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all flex items-center gap-2",
+                    activeTab === 'admin' ? "bg-pazizo-green/10 text-pazizo-green" : "text-slate-600 hover:bg-slate-50"
+                  )}
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Staff Portal
+                </button>
+                
+                <div className="pt-4 border-t border-slate-100">
+                  <button 
+                    onClick={() => { setShowConcierge(true); setIsMenuOpen(false); }}
+                    className="w-full flex items-center justify-center gap-2 bg-pazizo-green text-white py-4 rounded-xl font-bold shadow-lg shadow-pazizo-green/20"
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                    Chat with Concierge
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Main Content */}
