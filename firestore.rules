@@ -1,0 +1,105 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: userId (UID)
+    // Fields:
+    //   - uid: string (required)
+    //   - email: string (required, email format)
+    //   - fullName: string (optional)
+    //   - role: string (required, enum: ['admin', 'client', 'content_marketing', 'logistics_partner'])
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: orders
+    // Document ID: orderId
+    // Fields:
+    //   - userId: string (required, owner UID)
+    //   - fullName: string (required)
+    //   - email: string (required)
+    //   - phone: string (required)
+    //   - volume: number (required, positive)
+    //   - status: string (required, enum: ['pending', 'in-transit', 'delivered'])
+    //   - location: map (required, {lat: number, lng: number})
+    //   - createdAt: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "jacquelineilboudo489@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isLogisticsPartner() {
+      return isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'logistics_partner';
+    }
+
+    function isContentMarketing() {
+      return isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'content_marketing';
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'createdAt']) &&
+             data.uid is string &&
+             data.email is string &&
+             data.role in ['admin', 'client', 'content_marketing', 'logistics_partner'] &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll(['userId', 'fullName', 'email', 'volume', 'status', 'location', 'createdAt']) &&
+             data.userId is string &&
+             data.volume is number && data.volume > 0 &&
+             data.status in ['pending', 'in-transit', 'delivered'] &&
+             data.location is map &&
+             data.location.lat is number && data.location.lng is number &&
+             data.createdAt is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Only admins can create/update roles, but users can create their own initial profile as 'client'
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && 
+                    (isOwner(userId) && request.resource.data.role == 'client' || isAdmin());
+      
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) &&
+                    (isAdmin() || (isOwner(userId) && request.resource.data.role == resource.data.role));
+    }
+
+    match /orders/{orderId} {
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin() || isLogisticsPartner());
+      
+      allow create: if isAuthenticated() && isValidOrder(request.resource.data) && 
+                    (request.resource.data.userId == request.auth.uid || isAdmin());
+      
+      allow update: if isAuthenticated() && isValidOrder(request.resource.data) &&
+                    (isAdmin() || 
+                     (isLogisticsPartner() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])) ||
+                     (request.auth.uid == resource.data.userId && request.resource.data.status == resource.data.status));
+      
+      allow delete: if isAdmin();
+    }
+  }
+}

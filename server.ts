@@ -1,20 +1,33 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
-import { fileURLToPath } from "url";
+import { Resend } from "resend";
+import dotenv from "dotenv";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+dotenv.config();
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
+  const resend = new Resend(process.env.RESEND_API_KEY || "re_LsCHytia_CwCiab1oZFmsMMwhbxvu5JrQ");
 
   app.use(express.json());
 
   // API Routes
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok", brand: "Pazizo Energy" });
+  app.post("/api/send-email", async (req, res) => {
+    const { to, subject, html } = req.body;
+    try {
+      const data = await resend.emails.send({
+        from: "Pazizo Energy <onboarding@resend.dev>",
+        to,
+        subject,
+        html,
+      });
+      res.json(data);
+    } catch (error) {
+      console.error("Resend Error:", error);
+      res.status(500).json({ error: "Failed to send email" });
+    }
   });
 
   // Vite middleware for development
@@ -25,15 +38,15 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
+    const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
     });
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Pazizo Energy Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
   });
 }
 

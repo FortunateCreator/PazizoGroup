@@ -1,7 +1,5 @@
 {
   "name": "Pazizo Energy",
-  "description": "High-integrity diesel delivery platform for Nigeria. Staff Portal PIN: PAZIZO2026.",
-  "requestFramePermissions": [
-    "geolocation"
-  ]
+  "description": "High-conversion energy logistics platform with real-time tracking and integrity-focused delivery.",
+  "requestFramePermissions": ["geolocation"]
 }

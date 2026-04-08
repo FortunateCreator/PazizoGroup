@@ -1,66 +1,52 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { useSettings } from '../context/SettingsContext';
+import { motion, AnimatePresence } from "motion/react";
+import { useEffect, useState } from "react";
 
 export default function WhatsAppButton() {
-  const { settings } = useSettings();
-  const phoneNumber = settings.contactNumber;
-  const message = encodeURIComponent(`Hello ${settings.brandName}, I'm interested in a diesel delivery.`);
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div className="fixed bottom-8 left-8 z-50 flex flex-col items-start gap-3">
-      <AnimatePresence>
-        <motion.div
-          initial={{ opacity: 0, x: -20, scale: 0.8 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
-          transition={{ delay: 2 }}
-          className="bg-white px-4 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2"
+    <AnimatePresence>
+      {isVisible && (
+        <motion.a
+          href="https://wa.me/1234567890" // Placeholder number
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ x: 100, opacity: 0, rotate: 45 }}
+          animate={{ 
+            x: 0, 
+            opacity: 1,
+            rotate: 0,
+            transition: { type: "spring", stiffness: 260, damping: 20, mass: 0.8 }
+          }}
+          whileHover={{ scale: 1.2, rotate: 10 }}
+          whileTap={{ scale: 0.8, rotate: -10 }}
+          className="fixed bottom-6 right-6 z-50 bg-[#25D366] p-4 rounded-full shadow-lg cursor-pointer"
         >
-          <div className="w-2 h-2 bg-pazizo-green rounded-full animate-pulse" />
-          <span className="text-xs font-bold text-slate-600 whitespace-nowrap">We're online! Chat with us</span>
-        </motion.div>
-      </AnimatePresence>
-
-      <motion.a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ 
-          scale: 1, 
-          opacity: 1,
-          y: [0, -8, 0]
-        }}
-        transition={{
-          scale: { duration: 0.3 },
-          opacity: { duration: 0.3 },
-          y: {
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }
-        }}
-        whileHover={{ scale: 1.1, y: 0 }}
-        whileTap={{ scale: 0.9 }}
-        className="relative group"
-      >
-        {/* Pulsing Background Glow */}
-        <div className="absolute inset-0 bg-[#25D366] rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-opacity animate-pulse" />
-        
-        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 256 256" className="relative drop-shadow-2xl">
-          <g transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
-            <linearGradient id="SVGID_1" gradientUnits="userSpaceOnUse" x1="45.1039" y1="72.9567" x2="44.8639" y2="8.3967">
-              <stop offset="0%" stopColor="rgb(0,204,62)" stopOpacity="1"/>
-              <stop offset="100%" stopColor="rgb(1,237,94)" stopOpacity="1"/>
-            </linearGradient>
-            <path d="M 73.26 90 H 16.74 C 7.495 90 0 82.505 0 73.26 V 16.74 C 0 7.495 7.495 0 16.74 0 h 56.52 C 82.505 0 90 7.495 90 16.74 v 56.52 C 90 82.505 82.505 90 73.26 90 z" fill="url(#SVGID_1)" strokeLinecap="round"/>
-            <path d="M 37.403 32.564 c -0.541 -1.201 -1.11 -1.226 -1.624 -1.247 L 34.396 31.3 c -0.481 0 -1.263 0.181 -1.924 0.903 c -0.661 0.722 -2.526 2.468 -2.526 6.018 c 0 3.55 2.586 6.981 2.946 7.463 c 0.36 0.482 4.992 8 12.327 10.892 c 6.095 2.404 7.335 1.926 8.659 1.806 c 1.324 -0.12 4.269 -1.745 4.87 -3.43 c 0.601 -1.685 0.601 -3.129 0.421 -3.43 c -0.18 -0.302 -0.661 -0.481 -1.384 -0.842 c -0.722 -0.361 -4.269 -2.107 -4.931 -2.348 s -1.142 -0.361 -1.624 0.361 c -0.482 0.722 -1.863 2.347 -2.284 2.828 c -0.421 0.482 -0.842 0.542 -1.564 0.181 c -0.722 -0.361 -3.046 -1.123 -5.803 -3.581 c -2.145 -1.913 -3.593 -4.275 -4.015 -4.997 c -0.422 -0.722 -0.045 -1.113 0.317 -1.472 c 0.324 -0.323 0.721 -0.843 1.083 -1.264 c 0.361 -0.421 0.48 -0.722 0.721 -1.203 s 0.12 -0.903 -0.06 -1.264 C 39.446 37.56 38.044 33.991 37.403 32.564" fill="rgb(255,255,255)" fillRule="evenodd" strokeLinecap="round"/>
-            <polygon points="73.5,23.1 66.3,23.1 66.3,15.9 61.35,15.9 61.35,23.1 54.15,23.1 54.15,28.05 61.35,28.05 61.35,35.25 66.3,35.25 66.3,28.05 73.5,28.05 " fill="rgb(255,255,255)"/>
-            <path d="M 67.716 38.13 c 0.597 2.105 0.915 4.296 0.908 6.524 c 0 0 0 0 0 0 s 0 0 0 0 C 68.618 57.885 57.851 68.65 44.621 68.65 h -0.009 c -3.77 -0.002 -7.475 -0.888 -10.811 -2.574 c -0.477 -0.241 -0.945 -0.498 -1.406 -0.771 l -0.877 -0.52 l -9.085 2.382 l 2.425 -8.854 l -0.571 -0.908 c -2.404 -3.825 -3.676 -8.252 -3.669 -12.77 c 0.005 -13.23 10.772 -23.994 24.012 -23.994 c 2.394 -0.006 4.752 0.349 7 1.034 v -5.056 c -2.265 -0.562 -4.614 -0.853 -7.009 -0.854 c -15.919 0 -28.873 12.95 -28.88 28.868 c -0.006 5.066 1.324 10.044 3.855 14.433 l -4.097 14.96 l 15.309 -4.015 c 4.218 2.3 8.967 3.512 13.8 3.514 h 0.013 c 15.916 0 28.872 -12.953 28.879 -28.87 c 0.001 -2.225 -0.254 -4.41 -0.742 -6.526 H 67.716 z" fill="rgb(255,255,255)" strokeLinecap="round"/>
-          </g>
-        </svg>
-      </motion.a>
-    </div>
+          <motion.div
+            animate={{
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatDelay: 3,
+            }}
+          >
+            <svg
+              viewBox="0 0 1000 1000"
+              className="w-8 h-8 fill-white"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M500 0C223.8 0 0 223.8 0 500c0 88.3 22.9 171.2 63.1 243.2L0 1000l262.8-61.9C331.4 977.1 413.7 1000 500 1000c276.2 0 500-223.8 500-500S776.2 0 500 0zm270.2 710.2c-11.1 31.2-64.4 57.3-89.4 60.8-22.1 3.1-51.1 5.3-121.4-23.8-90.1-37.3-148.1-128.8-152.6-134.8-4.5-6-36.6-48.7-36.6-92.9 0-44.2 23.1-65.9 31.3-74.9 8.2-9 18-11.2 24-11.2 6 0 12 0 17.2.3 5.5.3 12.8-.8 20.1 16.7 7.5 18 25.5 62.3 27.8 66.8 2.3 4.5 3.8 9.8.8 15.8-3 6-4.5 9.8-9 15-4.5 5.3-9.5 11.8-13.5 15.8-4.5 4.5-9.2 9.5-4 18.5 5.3 9 23.3 38.3 50.1 62.1 34.5 30.7 63.6 40.3 72.6 44.8 9 4.5 14.3 3.8 19.5-2.3 5.3-6 22.5-26.3 28.5-35.3 6-9 12-7.5 20.3-4.5 8.3 3 52.6 24.8 61.6 29.3 9 4.5 15 6.8 17.2 10.5 2.2 3.7 2.2 21.7-8.9 52.9z" />
+            </svg>
+          </motion.div>
+        </motion.a>
+      )}
+    </AnimatePresence>
   );
 }

@@ -1,191 +1,274 @@
-import React, { useState, useMemo } from 'react';
-import { useOrders } from '../context/OrderContext';
-import { NIGERIA_STATES, SPECIAL_MOQ_CITIES, PRICING_LOGIC } from '../types';
-import { AlertCircle, CheckCircle2, Calculator, ArrowRight, Loader2 } from 'lucide-react';
-import { cn } from '../lib/utils';
+import React, { useState, useEffect } from "react";
+import { motion } from "motion/react";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { MapPin, Mail, Phone, User, Send, AlertCircle } from "lucide-react";
+import { cn } from "@/src/lib/utils";
+import { auth, db, handleFirestoreError, OperationType } from "../firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
-interface OrderFormProps {
-  onSuccess: () => void;
-}
+const orderSchema = z.object({
+  fullName: z.string().min(3, "Full name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(10, "Phone number is required"),
+  volume: z.number().min(100, "Minimum 100L"),
+});
 
-export default function OrderForm({ onSuccess }: OrderFormProps) {
-  const { addOrder } = useOrders();
-  const [formData, setFormData] = useState({
-    customerName: '',
-    email: '',
-    phone: '',
-    address: '',
-    state: 'Lagos',
-    quantity: 1000,
+type OrderFormData = z.infer<typeof orderSchema>;
+
+export default function OrderForm() {
+  const [position, setPosition] = useState<[number, number]>([51.505, -0.09]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [user, setUser] = useState(auth.currentUser);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((u) => {
+      setUser(u);
+      if (u) {
+        setValue("fullName", u.displayName || "");
+        setValue("email", u.email || "");
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<OrderFormData>({
+    resolver: zodResolver(orderSchema),
+    defaultValues: {
+      volume: 500,
+      fullName: auth.currentUser?.displayName || "",
+      email: auth.currentUser?.email || "",
+    },
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  function LocationMarker() {
+    useMapEvents({
+      click(e) {
+        setPosition([e.latlng.lat, e.latlng.lng]);
+      },
+    });
 
-  const moq = useMemo(() => {
-    const isSpecial = SPECIAL_MOQ_CITIES.some(city => 
-      formData.address.toLowerCase().includes(city.toLowerCase()) || 
-      formData.state.toLowerCase().includes(city.toLowerCase())
+    return position === null ? null : (
+      <Marker position={position} />
     );
-    return isSpecial ? 100 : 1000;
-  }, [formData.address, formData.state]);
+  }
 
-  const totalPrice = useMemo(() => {
-    const multiplier = (PRICING_LOGIC.stateMultipliers as any)[formData.state] || 1.08;
-    return formData.quantity * PRICING_LOGIC.basePrice * multiplier;
-  }, [formData.quantity, formData.state]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    if (formData.quantity < moq) {
-      setError(`Minimum Order Quantity for this location is ${moq} Liters.`);
-      return;
+  const loginAndSubmit = async (data: OrderFormData) => {
+    if (!user) {
+      const provider = new GoogleAuthProvider();
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (error) {
+        console.error("Login Error:", error);
+        return;
+      }
     }
+    onSubmit(data);
+  };
 
+  const onSubmit = async (data: OrderFormData) => {
+    if (!auth.currentUser) return;
+    
     setIsSubmitting(true);
     try {
-      await addOrder({
-        ...formData,
-        totalPrice,
+      // 1. Save to Firestore
+      const orderRef = await addDoc(collection(db, "orders"), {
+        userId: auth.currentUser.uid,
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        volume: data.volume,
+        status: "pending",
+        location: { lat: position[0], lng: position[1] },
+        createdAt: serverTimestamp(),
       });
-      onSuccess();
-    } catch (err) {
-      setError('Failed to place order. Please try again.');
+
+      // 2. Send Email via API
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: data.email,
+          subject: "Order Received - Pazizo Energy",
+          html: `
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+              <h1 style="color: #2E7D32;">Order Received!</h1>
+              <p>Thank you <strong>${data.fullName}</strong> for choosing Pazizo Energy.</p>
+              <p>Your order <strong>#${orderRef.id.slice(0, 8)}</strong> has been successfully placed and is currently <strong>PENDING</strong>.</p>
+              <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 5px 0;"><strong>Volume:</strong> ${data.volume}L</p>
+                <p style="margin: 5px 0;"><strong>Delivery Location:</strong> ${position[0].toFixed(4)}, ${position[1].toFixed(4)}</p>
+              </div>
+              <p>You can track your order status in your <a href="${window.location.origin}" style="color: #2E7D32; font-weight: bold;">Dashboard</a>.</p>
+              <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+              <p style="font-size: 12px; color: #999;">Pazizo Energy - Energy with Integrity</p>
+            </div>
+          `,
+        }),
+      });
+      
+      alert("Order placed successfully! You can track it in your dashboard.");
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, "orders");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-slate-700">Full Name</label>
-          <input
-            required
-            type="text"
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all"
-            placeholder="John Doe"
-            value={formData.customerName}
-            onChange={e => setFormData({ ...formData, customerName: e.target.value })}
-          />
+    <section id="order" className="py-24 bg-slate-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-slate-900 mb-4">Place Your Order</h2>
+          <p className="text-slate-600 max-w-2xl mx-auto">
+            Select your delivery location on the map and fill in your details. 
+            Our team will handle the rest with integrity and speed.
+          </p>
         </div>
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-slate-700">Phone Number</label>
-          <input
-            required
-            type="tel"
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all"
-            placeholder="+234 ..."
-            value={formData.phone}
-            onChange={e => setFormData({ ...formData, phone: e.target.value })}
-          />
-        </div>
-      </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-semibold text-slate-700">Email Address</label>
-        <input
-          required
-          type="email"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all"
-          placeholder="john@example.com"
-          value={formData.email}
-          onChange={e => setFormData({ ...formData, email: e.target.value })}
-        />
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-slate-700">State</label>
-          <select
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all bg-white"
-            value={formData.state}
-            onChange={e => setFormData({ ...formData, state: e.target.value })}
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* Map Component */}
+          <motion.div
+            initial={{ opacity: 0, x: -50, rotate: -1 }}
+            whileInView={{ opacity: 1, x: 0, rotate: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            className="h-[500px] rounded-3xl overflow-hidden shadow-xl border-4 border-white"
           >
-            {NIGERIA_STATES.map(state => (
-              <option key={state} value={state}>{state}</option>
-            ))}
-          </select>
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-slate-700">Quantity (Liters)</label>
-          <div className="relative">
-            <input
-              required
-              type="number"
-              min={moq}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all"
-              value={formData.quantity}
-              onChange={e => setFormData({ ...formData, quantity: parseInt(e.target.value) || 0 })}
-            />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">L</span>
-          </div>
+            <MapContainer
+              center={position}
+              zoom={13}
+              scrollWheelZoom={false}
+              className="h-full w-full"
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <LocationMarker />
+            </MapContainer>
+          </motion.div>
+
+          {/* Form Component */}
+          <motion.div
+            initial={{ opacity: 0, x: 50, rotate: 1 }}
+            whileInView={{ opacity: 1, x: 0, rotate: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.2 }}
+            className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200 border border-slate-100"
+          >
+            {!user && (
+              <motion.div 
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.5, type: "spring" }}
+                className="mb-8 p-4 bg-pazizo-gold/10 border border-pazizo-gold/20 rounded-2xl flex items-start gap-3"
+              >
+                <AlertCircle className="w-5 h-5 text-pazizo-gold shrink-0 mt-0.5" />
+                <p className="text-sm text-slate-700">
+                  <strong>First time?</strong> You'll be asked to sign in with Google to track your order and access your dashboard.
+                </p>
+              </motion.div>
+            )}
+
+            <form onSubmit={handleSubmit(loginAndSubmit)} className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <FormField
+                  label="Full Name"
+                  icon={<User className="w-4 h-4" />}
+                  error={errors.fullName?.message}
+                >
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    {...register("fullName")}
+                    placeholder="John Doe"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all"
+                  />
+                </FormField>
+
+                <FormField
+                  label="Email Address"
+                  icon={<Mail className="w-4 h-4" />}
+                  error={errors.email?.message}
+                >
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    {...register("email")}
+                    type="email"
+                    placeholder="john@example.com"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all"
+                  />
+                </FormField>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <FormField
+                  label="Phone Number"
+                  icon={<Phone className="w-4 h-4" />}
+                  error={errors.phone?.message}
+                >
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    {...register("phone")}
+                    placeholder="+1 (555) 000-0000"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all"
+                  />
+                </FormField>
+
+                <FormField
+                  label="Volume (Liters)"
+                  icon={<MapPin className="w-4 h-4" />}
+                  error={errors.volume?.message}
+                >
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    {...register("volume", { valueAsNumber: true })}
+                    type="number"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all"
+                  />
+                </FormField>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98, y: 0 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                disabled={isSubmitting}
+                className="w-full bg-pazizo-green text-white py-4 rounded-2xl font-bold shadow-lg shadow-pazizo-green/20 hover:bg-pazizo-green/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isSubmitting ? "Processing..." : (
+                  <>
+                    {user ? "Confirm Order" : "Login & Order"} <Send className="w-5 h-5" />
+                  </>
+                )}
+              </motion.button>
+            </form>
+          </motion.div>
         </div>
       </div>
+    </section>
+  );
+}
 
-      <div className="space-y-2">
-        <label className="text-sm font-semibold text-slate-700">Delivery Address</label>
-        <textarea
-          required
-          rows={3}
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all resize-none"
-          placeholder="Enter full delivery address..."
-          value={formData.address}
-          onChange={e => setFormData({ ...formData, address: e.target.value })}
-        />
+function FormField({ label, icon, children, error }: { label: string; icon: React.ReactNode; children: React.ReactNode; error?: string }) {
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-semibold text-slate-700">{label}</label>
+      <div className="relative">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+          {icon}
+        </div>
+        {children}
       </div>
-
-      {/* Pricing Summary */}
-      <div className="bg-slate-900 rounded-2xl p-6 text-white">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-slate-400">
-            <Calculator className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-wider">Estimated Quote</span>
-          </div>
-          <div className="px-2 py-1 bg-pazizo-gold/20 text-pazizo-gold rounded text-[10px] font-bold uppercase tracking-wider">
-            Live Rate
-          </div>
-        </div>
-        <div className="flex items-baseline justify-between">
-          <span className="text-slate-400 text-sm">Total Amount</span>
-          <span className="text-3xl font-bold text-pazizo-gold">
-            ₦{totalPrice.toLocaleString()}
-          </span>
-        </div>
-        <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-          <span>MOQ for this location: {moq}L</span>
-          <span>Price per Liter: ₦{(totalPrice / formData.quantity).toFixed(2)}</span>
-        </div>
-      </div>
-
-      {error && (
-        <div className="flex items-center gap-3 p-4 bg-red-50 text-red-600 rounded-xl border border-red-100">
-          <AlertCircle className="w-5 h-5 shrink-0" />
-          <p className="text-sm font-medium">{error}</p>
-        </div>
-      )}
-
-      <button
-        disabled={isSubmitting}
-        type="submit"
-        className="w-full bg-pazizo-green text-white py-4 rounded-xl font-bold text-lg hover:bg-pazizo-green/90 transition-all shadow-lg shadow-pazizo-green/20 flex items-center justify-center gap-2 group disabled:opacity-50"
-      >
-        {isSubmitting ? (
-          <Loader2 className="w-6 h-6 animate-spin" />
-        ) : (
-          <>
-            Confirm Order
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </>
-        )}
-      </button>
-
-      <p className="text-center text-xs text-slate-400">
-        By confirming, you agree to our terms of service and quality integrity loop.
-      </p>
-    </form>
+      {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
+    </div>
   );
 }
