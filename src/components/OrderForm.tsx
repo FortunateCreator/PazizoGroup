@@ -1,28 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { MapPin, Mail, Phone, User, Send, AlertCircle } from "lucide-react";
+import { MapPin, Mail, Phone, User, Send, AlertCircle, Home, Navigation } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { auth, db, handleFirestoreError, OperationType } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getIntelligentLocation } from "../services/LocationService";
 
 const orderSchema = z.object({
   fullName: z.string().min(3, "Full name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone number is required"),
   volume: z.number().min(100, "Minimum 100L"),
+  deliveryAddress: z.string().min(10, "Please provide a detailed delivery address"),
 });
 
 type OrderFormData = z.infer<typeof orderSchema>;
 
 export default function OrderForm() {
-  const [position, setPosition] = useState<[number, number]>([51.505, -0.09]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [user, setUser] = useState(auth.currentUser);
+  const [detectedLocation, setDetectedLocation] = useState<string>("");
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((u) => {
@@ -32,6 +33,15 @@ export default function OrderForm() {
         setValue("email", u.email || "");
       }
     });
+
+    // Try to pre-fill address with detected location
+    getIntelligentLocation().then(loc => {
+      setDetectedLocation(`${loc.city}, ${loc.state}`);
+      if (!getValues("deliveryAddress")) {
+        setValue("deliveryAddress", `${loc.city}, ${loc.state}`);
+      }
+    });
+
     return () => unsubscribe();
   }, []);
 
@@ -40,26 +50,16 @@ export default function OrderForm() {
     handleSubmit,
     formState: { errors },
     setValue,
+    getValues,
   } = useForm<OrderFormData>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
       volume: 500,
       fullName: auth.currentUser?.displayName || "",
       email: auth.currentUser?.email || "",
+      deliveryAddress: "",
     },
   });
-
-  function LocationMarker() {
-    useMapEvents({
-      click(e) {
-        setPosition([e.latlng.lat, e.latlng.lng]);
-      },
-    });
-
-    return position === null ? null : (
-      <Marker position={position} />
-    );
-  }
 
   const loginAndSubmit = async (data: OrderFormData) => {
     if (!user) {
@@ -86,8 +86,8 @@ export default function OrderForm() {
         email: data.email,
         phone: data.phone,
         volume: data.volume,
+        deliveryAddress: data.deliveryAddress,
         status: "pending",
-        location: { lat: position[0], lng: position[1] },
         createdAt: serverTimestamp(),
       });
 
@@ -105,7 +105,7 @@ export default function OrderForm() {
               <p>Your order <strong>#${orderRef.id.slice(0, 8)}</strong> has been successfully placed and is currently <strong>PENDING</strong>.</p>
               <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
                 <p style="margin: 5px 0;"><strong>Volume:</strong> ${data.volume}L</p>
-                <p style="margin: 5px 0;"><strong>Delivery Location:</strong> ${position[0].toFixed(4)}, ${position[1].toFixed(4)}</p>
+                <p style="margin: 5px 0;"><strong>Delivery Address:</strong> ${data.deliveryAddress}</p>
               </div>
               <p>You can track your order status in your <a href="${window.location.origin}" style="color: #2E7D32; font-weight: bold;">Dashboard</a>.</p>
               <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
@@ -129,41 +129,18 @@ export default function OrderForm() {
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-slate-900 mb-4">Place Your Order</h2>
           <p className="text-slate-600 max-w-2xl mx-auto">
-            Select your delivery location on the map and fill in your details. 
+            Fill in your delivery details below. 
             Our team will handle the rest with integrity and speed.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Map Component */}
-          <motion.div
-            initial={{ opacity: 0, x: -50, rotate: -1 }}
-            whileInView={{ opacity: 1, x: 0, rotate: 0 }}
-            viewport={{ once: true }}
-            transition={{ type: "spring", stiffness: 100, damping: 15 }}
-            className="h-[500px] rounded-3xl overflow-hidden shadow-xl border-4 border-white"
-          >
-            <MapContainer
-              center={position}
-              zoom={13}
-              scrollWheelZoom={false}
-              className="h-full w-full"
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <LocationMarker />
-            </MapContainer>
-          </motion.div>
-
+        <div className="max-w-3xl mx-auto">
           {/* Form Component */}
           <motion.div
-            initial={{ opacity: 0, x: 50, rotate: 1 }}
-            whileInView={{ opacity: 1, x: 0, rotate: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.2 }}
-            className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200 border border-slate-100"
+            className="bg-white p-8 md:p-12 rounded-3xl shadow-xl shadow-slate-200 border border-slate-100"
           >
             {!user && (
               <motion.div 
@@ -218,7 +195,7 @@ export default function OrderForm() {
                   <motion.input
                     whileFocus={{ scale: 1.02 }}
                     {...register("phone")}
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="+234 800 000 0000"
                     className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all"
                   />
                 </FormField>
@@ -236,6 +213,25 @@ export default function OrderForm() {
                   />
                 </FormField>
               </div>
+
+              <FormField
+                label="Delivery Address"
+                icon={<Home className="w-4 h-4" />}
+                error={errors.deliveryAddress?.message}
+              >
+                <motion.textarea
+                  whileFocus={{ scale: 1.01 }}
+                  {...register("deliveryAddress")}
+                  placeholder="Street address, City, State"
+                  rows={3}
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pazizo-green/20 focus:border-pazizo-green outline-none transition-all resize-none"
+                />
+                {detectedLocation && (
+                  <p className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
+                    <Navigation className="w-3 h-3" /> Detected: {detectedLocation}
+                  </p>
+                )}
+              </FormField>
 
               <motion.button
                 whileHover={{ scale: 1.02, y: -2 }}

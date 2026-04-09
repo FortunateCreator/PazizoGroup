@@ -9,9 +9,14 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    cursor: none;
   }
   body {
     @apply bg-white text-slate-900 font-sans;
+    cursor: none;
+  }
+  a, button, input, select, textarea, [role="button"] {
+    cursor: none !important;
   }
 }
 

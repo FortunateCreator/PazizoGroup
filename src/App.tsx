@@ -6,10 +6,11 @@
 import * as React from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
+import IntelligentTracker from "./components/IntelligentTracker";
 import OrderForm from "./components/OrderForm";
 import Footer from "./components/Footer";
-import WhatsAppButton from "./components/WhatsAppButton";
-import CallButton from "./components/CallButton";
+import LogisticsCallButton from "./components/LogisticsCallButton";
+import CustomCursor from "./components/CustomCursor";
 import Dashboard from "./components/Dashboard";
 import AdminPortal from "./components/AdminPortal";
 import { auth, db } from "./firebase";
@@ -47,6 +48,7 @@ export default function App() {
         return (
           <>
             <Hero />
+            <IntelligentTracker />
             <OrderForm />
           </>
         );
@@ -55,13 +57,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
+      <CustomCursor />
       <Navbar onNavigate={setCurrentPage} />
       <main>
         {renderPage()}
       </main>
       <Footer />
-      <CallButton />
-      <WhatsAppButton />
+      <LogisticsCallButton />
     </div>
   );
 }

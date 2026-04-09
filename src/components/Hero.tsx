@@ -155,13 +155,14 @@ export default function Hero() {
                 </div>
               </div>
 
-              <motion.button
+              <motion.a
+                href="tel:+234800PAZIZO"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full bg-pazizo-gold text-white py-4 rounded-2xl font-bold shadow-lg shadow-pazizo-gold/20 hover:bg-pazizo-gold/90 transition-colors"
+                className="w-full bg-pazizo-gold text-white py-4 rounded-2xl font-bold shadow-lg shadow-pazizo-gold/20 hover:bg-pazizo-gold/90 transition-colors flex items-center justify-center"
               >
                 Lock in this Price
-              </motion.button>
+              </motion.a>
               
               <p className="text-center text-xs text-slate-400">
                 *Final price may vary based on delivery location and real-time market rates.
