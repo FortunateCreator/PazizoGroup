@@ -6,9 +6,14 @@
     }
   },
   "routes": [
+    { "src": "/favicon\\.ico", "dest": "/favicon.ico" },
+    { "src": "/favicon-32x32\\.png", "dest": "/favicon-32x32.png" },
+    { "src": "/apple-touch-icon\\.png", "dest": "/apple-touch-icon.png" },
+    { "src": "/android-chrome-192x192\\.png", "dest": "/android-chrome-192x192.png" },
+    { "src": "/pazizo-logo\\.png", "dest": "/pazizo-logo.png" },
+    { "src": "/(.*\\.(css|js|png|jpg|svg|ico|webp))", "dest": "/$1" },
     { "src": "/static/(.*)", "dest": "/api/static/$1" },
     { "src": "/uploads/(.*)", "dest": "/api/static/uploads/$1" },
-    { "src": "/(.*\\.(css|js|png|jpg|svg|ico|webp))", "dest": "/$1" },
     { "src": "/", "dest": "/index.html" },
     { "src": "/(.*)", "dest": "/api/index" }
   ]
