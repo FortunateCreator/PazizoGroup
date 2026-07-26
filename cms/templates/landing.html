@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pazizo Energy — Diesel Supply to All 36 States Since 2014 | Nigeria's Reliable Fuel Partner</title>
+<meta name="description" content="Pazizo Energy — Nigeria diesel supply since 2014. Bulk AGO delivery to all 36 states + FCT. Fixed-price contracts, lab-tested fuel, GPS-tracked fleet. Get a quote in 60 seconds.">
+<meta property="og:title" content="Pazizo Energy — Diesel. Delivered. To Every State in Nigeria.">
+<meta property="og:description" content="10+ years powering Nigeria. Bulk diesel to all 36 states + FCT. Fixed-price contracts. Emergency 24/7 delivery.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080a0e;--bg2:#0e1017;--bg3:#161a24;--accent:#d97706;--accent2:#f59e0b;--accent3:#92400e;--gold:#fbbf24;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;--radius:16px;--radius-sm:8px;--transition:0.3s cubic-bezier(0.4,0,0.2,1)}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 0;background:rgba(8,10,14,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(217,119,6,.1);transition:var(--transition)}
+nav.scrolled{background:rgba(8,10,14,.95);box-shadow:0 4px 30px rgba(0,0,0,.3)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-weight:800;font-size:1.3rem;text-decoration:none;letter-spacing:-.5px}
+.nav-logo span:nth-child(1){color:var(--text)}
+.nav-logo span:nth-child(2){background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:.85rem;font-weight:500;transition:color var(--transition);position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent);transition:width var(--transition)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000!important;padding:8px 20px;border-radius:50px;font-weight:700!important;font-size:.8rem!important;transition:transform var(--transition),box-shadow var(--transition)!important}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(217,119,6,.4)!important}
+.nav-cta::after{display:none!important}
+.mobile-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.mobile-toggle span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:var(--transition)}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;padding:120px 24px 80px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.hero-bg .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.12}
+.hero-bg .orb:nth-child(1){width:700px;height:700px;background:var(--accent);top:-250px;right:-200px;animation:orbFloat 8s ease-in-out infinite}
+.hero-bg .orb:nth-child(2){width:500px;height:500px;background:var(--accent3);bottom:-150px;left:-100px;animation:orbFloat 10s ease-in-out infinite reverse}
+.hero-bg .orb:nth-child(3){width:300px;height:300px;background:var(--gold);top:50%;left:50%;transform:translate(-50%,-50%);animation:orbFloat 12s ease-in-out infinite;opacity:.08}
+@keyframes orbFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-30px)}}
+
+/* ── Ambient Glow ── */
+.ambient-glow{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;isolation:isolate}
+.agl{position:absolute;border-radius:50%;filter:blur(80px);will-change:transform,opacity;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:translateZ(0)}
+.agl1{width:clamp(400px,50vw,700px);height:clamp(400px,50vw,700px);background:radial-gradient(circle,rgba(217,119,6,.2) 0%,rgba(251,146,60,.06) 60%,transparent 70%);top:-10%;left:-10%;animation:ad1 18s ease-in-out infinite,ab 6s ease-in-out infinite}
+.agl2{width:clamp(300px,40vw,550px);height:clamp(300px,40vw,550px);background:radial-gradient(circle,rgba(20,184,166,.15) 0%,rgba(6,182,212,.04) 60%,transparent 70%);top:40%;right:-8%;animation:ad2 22s ease-in-out infinite,ab 8s ease-in-out infinite reverse}
+.agl3{width:clamp(350px,45vw,600px);height:clamp(350px,45vw,600px);background:radial-gradient(circle,rgba(124,58,237,.12) 0%,rgba(99,102,241,.04) 60%,transparent 70%);bottom:-15%;left:20%;animation:ad3 20s ease-in-out infinite,ab 7s ease-in-out infinite}
+.agl4{width:clamp(200px,25vw,400px);height:clamp(200px,25vw,400px);background:radial-gradient(circle,rgba(251,191,36,.1) 0%,transparent 60%);top:20%;left:55%;animation:ad4 25s ease-in-out infinite}
+@keyframes ad1{0%,100%{transform:translate(0,0) rotate(0deg) scale(1)}25%{transform:translate(80px,-60px) rotate(5deg) scale(1.05)}50%{transform:translate(40px,80px) rotate(-3deg) scale(.95)}75%{transform:translate(-60px,30px) rotate(4deg) scale(1.02)}}
+@keyframes ad2{0%,100%{transform:translate(0,0) rotate(0deg) scale(1)}25%{transform:translate(-70px,50px) rotate(-4deg) scale(.97)}50%{transform:translate(50px,-70px) rotate(6deg) scale(1.06)}75%{transform:translate(-30px,-40px) rotate(-2deg) scale(1.03)}}
+@keyframes ad3{0%,100%{transform:translate(0,0) rotate(0deg) scale(1)}33%{transform:translate(60px,-50px) rotate(8deg) scale(1.04)}66%{transform:translate(-80px,40px) rotate(-5deg) scale(.96)}}
+@keyframes ad4{0%,100%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(-40px,-60px) rotate(10deg)}}
+@keyframes ab{0%,100%{opacity:.6}50%{opacity:1}}
+.hero-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:2}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.25);border-radius:50px;font-size:.8rem;color:var(--accent2);margin-bottom:24px;font-weight:500}
+.hero-badge .dot{width:6px;height:6px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:1.05;margin-bottom:16px;letter-spacing:-1px}
+.hero h1 .gradient{background:linear-gradient(135deg,var(--accent2),var(--gold),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .subtitle{font-size:clamp(1rem,2vw,1.25rem);color:var(--text2);margin-bottom:12px;min-height:1.8em}
+.hero .subtitle .highlight{color:var(--accent2);font-weight:600}
+.hero-desc{font-size:.95rem;color:var(--text3);line-height:1.8;margin-bottom:32px;max-width:560px}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:50px;font-weight:600;font-size:.9rem;text-decoration:none;transition:all var(--transition);cursor:pointer;border:none}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;box-shadow:0 4px 20px rgba(217,119,6,.3);font-weight:700}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(217,119,6,.5)}
+.btn-secondary{background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.3);color:var(--accent2)}
+.btn-secondary:hover{background:rgba(217,119,6,.2);transform:translateY(-2px)}
+.btn-whatsapp{background:#22c55e;color:#000;font-weight:700;box-shadow:0 4px 20px rgba(34,197,94,.3)}
+.btn-whatsapp:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(34,197,94,.5)}
+
+/* Hero Visual */
+.hero-visual{position:relative;display:flex;justify-content:center;align-items:center}
+.hero-card-stack{width:340px;position:relative}
+.hero-card{background:var(--bg2);border:1px solid rgba(217,119,6,.15);border-radius:var(--radius);padding:24px;backdrop-filter:blur(10px)}
+.hero-card .big-stat{font-size:4rem;font-weight:900;background:linear-gradient(135deg,var(--accent2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.hero-card .stat-label{font-size:.8rem;color:var(--text3);margin-top:4px}
+.hero-card .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.04)}
+.hero-card .mini-stat .num{font-size:1.3rem;font-weight:700;color:var(--accent2)}
+.hero-card .mini-stat .lbl{font-size:.7rem;color:var(--text3)}
+.floating-badge{position:absolute;background:var(--bg2);border:1px solid rgba(217,119,6,.2);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:.75rem;animation:float 3s ease-in-out infinite;backdrop-filter:blur(10px)}
+.floating-badge:nth-child(2){top:-10px;right:-30px;color:var(--gold)}
+.floating-badge:nth-child(3){bottom:30px;left:-40px;color:#22c55e}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* Stats Bar */
+.stats-bar{background:var(--bg2);border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04);padding:48px 24px}
+.stats-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+.stat-item h3{font-size:2.8rem;font-weight:900;background:linear-gradient(135deg,var(--accent2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.stat-item p{color:var(--text3);font-size:.85rem;margin-top:6px;font-weight:500;text-transform:uppercase;letter-spacing:1px}
+
+/* Sections */
+section{padding:100px 24px}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-label{display:inline-block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--accent2);margin-bottom:8px}
+.section-title{font-size:clamp(1.75rem,3.5vw,2.5rem);font-weight:800;margin-bottom:16px;letter-spacing:-.5px}
+.section-desc{color:var(--text3);max-width:600px;font-size:.95rem;margin-bottom:48px}
+
+/* Problem / Solution */
+#problem{background:var(--bg2)}
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.problem-col h3,.solution-col h3{font-size:1.1rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.problem-col h3{color:#ef4444}
+.solution-col h3{color:#22c55e}
+.problem-items,.solution-items{display:flex;flex-direction:column;gap:12px}
+.problem-item,.solution-item{display:flex;gap:12px;padding:14px 16px;background:var(--bg);border-radius:var(--radius-sm);align-items:flex-start}
+.problem-item .icon{color:#ef4444;font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.solution-item .icon{color:#22c55e;font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.problem-item p,.solution-item p{font-size:.85rem;color:var(--text2);line-height:1.6}
+.solution-item p strong{color:var(--text)}
+
+/* Coverage */
+.coverage-header{text-align:center;margin-bottom:40px}
+.coverage-header .big-num{font-size:5rem;font-weight:900;background:linear-gradient(135deg,var(--accent2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.coverage-header .big-sub{font-size:1.1rem;color:var(--text2);margin-top:4px}
+.coverage-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;max-width:900px;margin:0 auto}
+.state-chip{background:var(--bg2);border:1px solid rgba(217,119,6,.1);border-radius:var(--radius-sm);padding:8px 6px;font-size:.8rem;color:var(--text2);text-align:center;transition:all var(--transition);font-weight:500}
+.state-chip:hover{background:rgba(217,119,6,.1);border-color:var(--accent);color:var(--accent2);transform:translateY(-2px)}
+.state-chip.highlight{background:rgba(217,119,6,.12);border-color:var(--accent);color:var(--accent2)}
+
+/* Lead Capture */
+#quote{background:var(--bg2)}
+.lead-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.lead-info h3{font-size:1.25rem;font-weight:700;margin-bottom:16px}
+.lead-info p{color:var(--text3);font-size:.9rem;line-height:1.7;margin-bottom:20px}
+.lead-benefits{list-style:none;display:flex;flex-direction:column;gap:10px}
+.lead-benefits li{display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--text2)}
+.lead-benefits li .check{color:#22c55e;font-weight:700}
+.lead-form{display:flex;flex-direction:column;gap:14px}
+.lead-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 16px;background:var(--bg);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm);color:var(--text);font-size:.875rem;font-family:'Inter',sans-serif;transition:border-color var(--transition);outline:none;appearance:none;-webkit-appearance:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(217,119,6,.1)}
+.form-group select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.form-group select option{background:var(--bg);color:var(--text)}
+.form-group input::placeholder{color:var(--text3)}
+.trust-line{font-size:.75rem;color:var(--text3);text-align:center;margin-top:8px}
+
+/* Industries */
+.industry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.industry-card{background:var(--bg2);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius);padding:28px 20px;text-align:center;transition:all var(--transition)}
+.industry-card:hover{transform:translateY(-4px);border-color:rgba(217,119,6,.25);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.industry-card .icon{font-size:2.5rem;display:block;margin-bottom:12px}
+.industry-card .name{font-size:.9rem;font-weight:600}
+
+/* Testimonials */
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.testimonial-card{background:var(--bg2);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius);padding:28px;transition:var(--transition)}
+.testimonial-card:hover{transform:translateY(-2px);border-color:rgba(217,119,6,.15)}
+.testimonial-card .stars{color:var(--gold);font-size:.85rem;margin-bottom:12px}
+.testimonial-card blockquote{color:var(--text2);font-size:.85rem;font-style:italic;line-height:1.7;margin-bottom:16px}
+.testimonial-card .author{display:flex;align-items:center;gap:12px;padding-top:16px;border-top:1px solid rgba(255,255,255,.04)}
+.testimonial-card .author .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;color:#000}
+.testimonial-card .author .info .name{font-size:.85rem;font-weight:600}
+.testimonial-card .author .info .role{font-size:.75rem;color:var(--text3)}
+
+/* CTA Bottom */
+.cta-section{background:var(--bg2);text-align:center}
+.cta-box{max-width:700px;margin:0 auto;padding:60px 40px;background:linear-gradient(135deg,rgba(217,119,6,.05) 0%,rgba(251,191,36,.02) 100%);border:1px solid rgba(217,119,6,.15);border-radius:var(--radius)}
+.cta-box h2{font-size:clamp(1.5rem,3vw,2rem);font-weight:800;margin-bottom:12px}
+.cta-box p{color:var(--text3);font-size:.95rem;max-width:500px;margin:0 auto 28px}
+.cta-box .btn{padding:16px 36px;font-size:1rem}
+
+/* Footer */
+footer{background:var(--bg);border-top:1px solid rgba(255,255,255,.04);padding:48px 24px;text-align:center}
+footer .footer-inner{max-width:1200px;margin:0 auto}
+footer .footer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;text-align:left;margin-bottom:32px}
+footer h4{font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--text)}
+footer p,footer a{font-size:.8rem;color:var(--text3);text-decoration:none;line-height:1.8}
+footer a:hover{color:var(--accent2)}
+footer .footer-bottom{border-top:1px solid rgba(255,255,255,.04);padding-top:20px;font-size:.8rem;color:var(--text3)}
+
+/* Responsive */
+@media(max-width:1200px){
+  .hero-grid{gap:40px}
+  .hero-card-stack{width:300px}
+  .hero-card .big-stat{font-size:3rem}
+  .floating-badge:nth-child(2){right:0}
+  .floating-badge:nth-child(3){left:-20px}
+}
+@media(max-width:1024px){
+  .hero-grid{grid-template-columns:1fr;gap:32px;text-align:center}
+  .hero-desc{margin:0 auto 32px;max-width:100%}
+  .hero-actions{justify-content:center}
+  .hero-visual{order:-1}
+  .hero-card-stack{width:280px}
+  .floating-badge{font-size:.7rem;padding:8px 12px}
+  .floating-badge:nth-child(2){top:-5px;right:5%}
+  .floating-badge:nth-child(3){bottom:20px;left:5%}
+  .stats-grid{grid-template-columns:repeat(4,1fr);gap:16px}
+  .stat-item h3{font-size:2rem}
+  .problem-grid{grid-template-columns:1fr;gap:32px}
+  .lead-grid{grid-template-columns:1fr;gap:32px}
+  .testimonials-grid{grid-template-columns:1fr;max-width:600px;margin:0 auto}
+  section{padding:80px 24px}
+  .coverage-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}
+}
+@media(max-width:900px){
+  .industry-grid{grid-template-columns:repeat(4,1fr)}
+  .stats-grid{gap:12px}
+  .stat-item h3{font-size:1.8rem}
+  .footer-grid{grid-template-columns:1fr;gap:24px;text-align:center}
+}
+@media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(8,10,14,.98);flex-direction:column;padding:20px 24px 28px;gap:18px;border-bottom:1px solid rgba(217,119,6,.1);backdrop-filter:blur(20px);max-height:0;overflow:hidden;transition:max-height .4s ease,opacity .3s ease;opacity:0}
+  .nav-links.open{display:flex;max-height:400px;opacity:1}
+  .nav-links a{font-size:1rem;padding:6px 0}
+  .nav-cta{margin-top:4px;text-align:center;width:100%;padding:12px 20px!important}
+  .mobile-toggle{display:flex;width:44px;height:44px;align-items:center;justify-content:center;border-radius:8px}
+  .mobile-toggle:active{background:rgba(255,255,255,.06)}
+  .hero{padding:100px 16px 60px;min-height:auto}
+  .hero h1{font-size:clamp(1.8rem,6vw,2.5rem)}
+  .hero-desc{font-size:.85rem}
+  .hero-badge{font-size:.7rem;padding:4px 12px}
+  .floating-badge{display:none}
+  .hero-card-stack{width:220px}
+  .hero-card{padding:20px}
+  .hero-card .big-stat{font-size:2.5rem}
+  .hero-card .stat-row{gap:12px}
+  .hero-card .mini-stat .num{font-size:1.1rem}
+  section{padding:60px 16px}
+  .stats-bar{padding:32px 16px}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:20px}
+  .stat-item h3{font-size:1.8rem}
+  .section-title{font-size:1.5rem}
+  .section-desc{font-size:.85rem;margin-bottom:32px}
+  .lead-form .form-row{grid-template-columns:1fr}
+  .industry-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .industry-card{padding:20px 16px}
+  .industry-card .icon{font-size:2rem}
+  .coverage-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}
+  .coverage-header .big-num{font-size:3.5rem}
+  .cta-box{padding:40px 24px}
+  .btn{padding:12px 24px;font-size:.85rem;min-height:44px}
+  footer{padding:32px 16px}
+}
+@media(max-width:480px){
+  .hero-card-stack{width:100%}
+  .hero{padding:80px 12px 48px}
+  .hero h1{font-size:clamp(1.5rem,7vw,1.8rem)}
+  .hero-actions{flex-direction:column;align-items:stretch;gap:10px}
+  .btn{width:100%;justify-content:center}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:16px}
+  .stat-item h3{font-size:1.4rem}
+  .stat-item p{font-size:.7rem}
+  section{padding:48px 12px}
+  .section-title{font-size:1.3rem}
+  .industry-grid{grid-template-columns:repeat(2,1fr)}
+  .industry-card{padding:16px 12px}
+  .industry-card .icon{font-size:1.6rem}
+  .industry-card .name{font-size:.8rem}
+  .testimonial-card{padding:20px}
+  .coverage-grid{grid-template-columns:repeat(4,1fr);gap:6px}
+  .state-chip{font-size:.7rem;padding:6px 4px}
+  .coverage-header .big-num{font-size:2.8rem}
+  .lead-grid{gap:24px}
+  .cta-box{padding:32px 20px}
+  nav{padding:12px 0}
+  .nav-inner{padding:0 12px}
+  .nav-logo{font-size:1.1rem}
+}
+@media(max-width:380px){
+  .hero h1{font-size:1.3rem}
+  .stats-grid{gap:12px}
+  .stat-item h3{font-size:1.2rem}
+  .section-title{font-size:1.15rem}
+  .industry-grid{grid-template-columns:1fr 1fr}
+  .coverage-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Ambient Glow ── -->
+<div class="ambient-glow">
+  <div class="agl agl1"></div>
+  <div class="agl agl2"></div>
+  <div class="agl agl3"></div>
+  <div class="agl agl4"></div>
+</div>
+
+<!-- Nav -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo"><span>Pazizo</span><span>Energy</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#problem">The Problem</a></li>
+      <li><a href="#coverage">Coverage</a></li>
+      <li><a href="#industries">Industries</a></li>
+      <li><a href="#testimonials">Trusted By</a></li>
+      <li><a href="#quote" class="nav-cta">📞 Get a Quote</a></li>
+    </ul>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="hero-grid">
+    <div class="hero-text">
+      <div class="hero-badge"><span class="dot"></span> Est. 2014 · 10+ Years Running</div>
+      <h1>Diesel, delivered. To <span class="gradient">every state</span> in Nigeria.</h1>
+      <p class="subtitle">Your generator doesn't care about excuses. <span class="highlight">Neither do we.</span></p>
+      <p class="hero-desc">Pazizo Energy has kept factories, banks, telecom towers, and hospitals running across all 36 states and Abuja since 2014. Fixed-price contracts, lab-tested AGO, GPS-tracked fleet — no drama, just diesel.</p>
+      <div class="hero-actions">
+        <a href="#quote" class="btn btn-primary">🚚 Call or Get a Quote</a>
+        <a href="https://wa.me/234800000000" class="btn btn-whatsapp">💬 WhatsApp Us</a>
+        <a href="#how" class="btn btn-secondary">See How It Works</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card-stack">
+        <div class="hero-card">
+          <div class="big-stat">10+</div>
+          <div class="stat-label">Years Powering Nigeria</div>
+          <div class="stat-row">
+            <div class="mini-stat"><div class="num">37</div><div class="lbl">States Covered</div></div>
+            <div class="mini-stat"><div class="num">500+</div><div class="lbl">Active Clients</div></div>
+            <div class="mini-stat"><div class="num">24/7</div><div class="lbl">Emergency Delivery</div></div>
+            <div class="mini-stat"><div class="num">₦0</div><div class="lbl">Hidden Fees</div></div>
+          </div>
+        </div>
+        <div class="floating-badge" style="top:-10px;right:-30px;">⭐ 4.8 Client Rating</div>
+        <div class="floating-badge" style="bottom:30px;left:-40px;">✅ SON & DPR Certified</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stats-grid">
+    <div class="stat-item"><h3>10+</h3><p>Years Operating</p></div>
+    <div class="stat-item"><h3>37</h3><p>States + FCT Covered</p></div>
+    <div class="stat-item"><h3>500+</h3><p>Active Business Clients</p></div>
+    <div class="stat-item"><h3>24/7</h3><p>Emergency Delivery</p></div>
+  </div>
+</div>
+
+<!-- Problem/Solution -->
+<section id="problem">
+  <div class="section-inner">
+    <span class="section-label">The Reality</span>
+    <h2 class="section-title">Diesel supply in Nigeria is broken.</h2>
+    <p class="section-desc">Price swings, vanishing suppliers, watered-down fuel, and no real coverage outside major cities. Here's what you're up against — and why Pazizo is different.</p>
+    <div class="problem-grid">
+      <div class="problem-col">
+        <h3>❌ What You're Dealing With</h3>
+        <div class="problem-items">
+          <div class="problem-item"><span class="icon">✕</span><p>Price swings that wreck your monthly budget with zero warning</p></div>
+          <div class="problem-item"><span class="icon">✕</span><p>Suppliers who vanish the moment diesel gets scarce</p></div>
+          <div class="problem-item"><span class="icon">✕</span><p>Tankers that show up late, short, or with watered-down fuel</p></div>
+          <div class="problem-item"><span class="icon">✕</span><p>No real coverage outside Lagos and Abuja</p></div>
+        </div>
+      </div>
+      <div class="solution-col">
+        <h3>✅ How Pazizio Solves It</h3>
+        <div class="solution-items">
+          <div class="solution-item"><span class="icon">✓</span><p><strong>Fixed-price contracts.</strong> Lock in rates. Stop budgeting blind.</p></div>
+          <div class="solution-item"><span class="icon">✓</span><p><strong>We show up.</strong> Scarcity or surplus, your order ships on schedule.</p></div>
+          <div class="solution-item"><span class="icon">✓</span><p><strong>Every liter tested.</strong> Lab-verified AGO. No shortcuts, no adulteration.</p></div>
+          <div class="solution-item"><span class="icon">✓</span><p><strong>All 36 states + FCT.</strong> Our trucks, our drivers, our fuel — anywhere.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Coverage -->
+<section id="coverage">
+  <div class="section-inner">
+    <div class="coverage-header">
+      <div class="section-label">Where We Deliver</div>
+      <h2 class="section-title">36 states. Abuja. One phone call.</h2>
+      <p class="section-desc" style="margin:0 auto;max-width:600px;margin-bottom:32px">Pazizo Energy runs active supply routes to every Nigerian state. Not "we can try." Not "we have a partner there." Our trucks, our drivers, our fuel.</p>
+      <div class="big-num">37</div>
+      <div class="big-sub">states + FCT covered</div>
+    </div>
+    <div class="coverage-grid">
+      <span class="state-chip">Abia</span><span class="state-chip">Adamawa</span><span class="state-chip">Akwa Ibom</span>
+      <span class="state-chip">Anambra</span><span class="state-chip">Bauchi</span><span class="state-chip">Bayelsa</span>
+      <span class="state-chip">Benue</span><span class="state-chip">Borno</span><span class="state-chip">Cross River</span>
+      <span class="state-chip">Delta</span><span class="state-chip">Ebonyi</span><span class="state-chip">Edo</span>
+      <span class="state-chip">Ekiti</span><span class="state-chip">Enugu</span><span class="state-chip highlight">FCT</span>
+      <span class="state-chip">Gombe</span><span class="state-chip">Imo</span><span class="state-chip">Jigawa</span>
+      <span class="state-chip">Kaduna</span><span class="state-chip">Kano</span><span class="state-chip">Katsina</span>
+      <span class="state-chip">Kebbi</span><span class="state-chip">Kogi</span><span class="state-chip">Kwara</span>
+      <span class="state-chip highlight">Lagos</span><span class="state-chip">Nasarawa</span><span class="state-chip">Niger</span>
+      <span class="state-chip">Ogun</span><span class="state-chip">Ondo</span><span class="state-chip">Osun</span>
+      <span class="state-chip">Oyo</span><span class="state-chip">Plateau</span><span class="state-chip">Rivers</span>
+      <span class="state-chip">Sokoto</span><span class="state-chip">Taraba</span><span class="state-chip">Yobe</span>
+      <span class="state-chip">Zamfara</span>
+    </div>
+  </div>
+</section>
+
+<!-- Industries -->
+<section id="industries">
+  <div class="section-inner">
+    <span class="section-label">Who We Fuel</span>
+    <h2 class="section-title">From telecom towers to factory floors.</h2>
+    <p class="section-desc">Every industry that can't afford downtime trusts Pazizio Energy for their diesel supply.</p>
+    <div class="industry-grid">
+      <div class="industry-card"><span class="icon">📡</span><span class="name">Telecom</span></div>
+      <div class="industry-card"><span class="icon">🏭</span><span class="name">Manufacturing</span></div>
+      <div class="industry-card"><span class="icon">🏦</span><span class="name">Banking & Finance</span></div>
+      <div class="industry-card"><span class="icon">🏨</span><span class="name">Hotels & Hospitality</span></div>
+      <div class="industry-card"><span class="icon">🏥</span><span class="name">Hospitals</span></div>
+      <div class="industry-card"><span class="icon">🏗️</span><span class="name">Construction</span></div>
+      <div class="industry-card"><span class="icon">🌾</span><span class="name">Agriculture</span></div>
+      <div class="industry-card"><span class="icon">🏛️</span><span class="name">Government</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section id="testimonials">
+  <div class="section-inner">
+    <span class="section-label">Trusted By</span>
+    <h2 class="section-title">People who can't afford to run dry.</h2>
+    <p class="section-desc">Here's what our clients say about working with Pazizo Energy.</p>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"We run 47 towers across the North. Before Pazizo, we had 3-4 downtime events per month from diesel issues. That number is now zero. I don't have to think about fuel anymore."</blockquote>
+        <div class="author">
+          <div class="avatar">TD</div>
+          <div class="info"><div class="name">Operations Director</div><div class="role">Major Telecom Provider, Kano</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Our factory in Ogun runs 24 hours. Pazizo's fixed contract means I know my energy costs 3 months ahead. The tracking dashboard is a bonus — I can see the tanker on the road from my phone."</blockquote>
+        <div class="author">
+          <div class="avatar">PM</div>
+          <div class="info"><div class="name">Plant Manager</div><div class="role">Manufacturing Company, Ogun State</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"When diesel scarcity hit last December, Pazizo was the only supplier that didn't increase our price or reduce our allocation. That's when you know who your real partners are."</blockquote>
+        <div class="author">
+          <div class="avatar">CE</div>
+          <div class="info"><div class="name">CEO</div><div class="role">Hospital Group, Abuja</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Lead Capture -->
+<section id="quote">
+  <div class="section-inner">
+    <span class="section-label">Get a Free Quote</span>
+    <h2 class="section-title">What's your diesel running you?</h2>
+    <p class="section-desc">Fill this out. We'll send you a price in under 2 hours — no obligation, no spam.</p>
+    <div class="lead-grid">
+      <div class="lead-info">
+        <h3>Ready to fix your diesel supply?</h3>
+        <p>For bulk orders of 1,000 liters and above. Emergency deliveries available 24/7.</p>
+        <ul class="lead-benefits">
+          <li><span class="check">✓</span> Fixed-price contracts — no surprises</li>
+          <li><span class="check">✓</span> GPS-tracked fleet — see exactly where your fuel is</li>
+          <li><span class="check">✓</span> Lab-certified AGO — meets SON & DPR specs</li>
+          <li><span class="check">✓</span> 24/7 emergency delivery — downtime costs more than diesel</li>
+          <li><span class="check">✓</span> Single point of contact — no call center maze</li>
+        </ul>
+      </div>
+      <form class="lead-form" onsubmit="event.preventDefault(); alert('Quote request received. We will contact you within 2 hours.'); this.reset();">
+        <div class="form-row">
+          <div class="form-group"><input type="text" placeholder="Your name" required></div>
+          <div class="form-group"><input type="text" placeholder="Company name" required></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><input type="tel" placeholder="Phone number" required></div>
+          <div class="form-group"><input type="email" placeholder="Email address" required></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <select required>
+              <option value="">Select your state</option>
+              <option>Lagos</option><option>Abuja (FCT)</option><option>Kano</option><option>Rivers</option>
+              <option>Kaduna</option><option>Oyo</option><option>Enugu</option><option>Delta</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <select required>
+              <option value="">Monthly volume</option>
+              <option>1,000 - 5,000 liters</option><option>5,000 - 20,000 liters</option>
+              <option>20,000 - 100,000 liters</option><option>100,000+ liters</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><textarea placeholder="Additional details or delivery location..." rows="2"></textarea></div>
+        <button type="submit" class="btn btn-primary" style="justify-content:center;width:100%;padding:16px">🚚 Send Quote Request</button>
+        <p class="trust-line">No spam. No pressure. Just a price in under 2 hours.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" style="padding-top:0">
+  <div class="section-inner">
+    <div class="cta-box">
+      <h2>Your generator shouldn't decide when you work.</h2>
+      <p>Tell us what you need. We'll give you a price. You decide. No games, no pressure.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <a href="#quote" class="btn btn-primary">📞 Call or Get a Quote</a>
+        <a href="https://wa.me/234800000000" class="btn btn-whatsapp">💬 WhatsApp Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <h4>Pazizo Energy</h4>
+        <p>Nigeria's reliable diesel supply partner since 2014. Fixed-price contracts, lab-tested fuel, nationwide coverage.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="#problem">The Problem</a><br>
+        <a href="#coverage">Coverage Map</a><br>
+        <a href="#industries">Industries We Serve</a><br>
+        <a href="#testimonials">Testimonials</a><br>
+        <a href="#quote">Get a Quote</a></p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>📞 0800 PAZIZO<br>
+        📧 diesel@pazizoenergy.com<br>
+        📍 Lagos, Nigeria<br>
+        🕐 24/7 Emergency Support</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Pazizo Group. Diesel supply since 2014. All 36 states + FCT, Nigeria.</p>
+    </div>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Pazizo Energy",
+  "description": "Nigeria diesel supply company since 2014. Bulk AGO delivery to all 36 states and FCT Abuja.",
+  "areaServed": {"@type": "Country", "name": "Nigeria"},
+  "priceRange": "₦₦",
+  "currenciesAccepted": "NGN"
+}
+</script>
+
+<script>
+// Mobile nav
+document.getElementById('mobileToggle').addEventListener('click', function(){
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+// Navbar scroll effect
+window.addEventListener('scroll', function(){
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Close mobile nav on link click
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
+});
+</script>
+</body>
+</html>

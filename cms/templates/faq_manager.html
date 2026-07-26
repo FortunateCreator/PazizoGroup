@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}FAQ Manager — Pazizo CMS{% endblock %}
+{% block content %}
+<h1 class="page-title">❓ FAQ Manager</h1>
+<p class="page-subtitle">{{ entries|length }} entries — SEO-optimized Q&A for diesel supply Nigeria queries</p>
+
+<!-- Add new FAQ -->
+<div class="card">
+    <div class="card-title">+ Add New FAQ Entry</div>
+    <form method="POST" action="/faq/add">
+        <div class="form-group">
+            <label>Question</label>
+            <input type="text" name="question" placeholder="e.g., How fast can Pazizo Energy deliver diesel to Kano?" required>
+        </div>
+        <div class="form-group">
+            <label>Answer</label>
+            <textarea name="answer" rows="4" placeholder="Write the answer here..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Add FAQ</button>
+    </form>
+</div>
+
+<!-- Existing FAQs -->
+{% for entry in entries %}
+<div class="card" id="faq-{{ loop.index0 }}">
+    <div style="display: flex; justify-content: space-between; align-items: start;">
+        <div class="card-title" style="flex: 1;">#{{ loop.index }} {{ entry.question }}</div>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn btn-sm" onclick="editFAQ({{ loop.index0 }})">Edit</button>
+            <form method="POST" action="/faq/delete/{{ loop.index0 }}" style="display: inline;"
+                  onsubmit="return confirm('Delete this FAQ?')">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+    <div style="font-size: 14px; color: var(--text2); line-height: 1.6; white-space: pre-wrap;">{{ entry.answer[:500] }}{% if entry.answer|length > 500 %}...{% endif %}</div>
+</div>
+{% endfor %}
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <h3 style="margin-bottom: 16px;">Edit FAQ</h3>
+        <form id="editForm" method="POST">
+            <div class="form-group">
+                <label>Question</label>
+                <input type="text" name="question" id="editQuestion" required>
+            </div>
+            <div class="form-group">
+                <label>Answer</label>
+                <textarea name="answer" id="editAnswer" rows="6" required></textarea>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Store entries data for editing
+const entries = {{ entries|tojson }};
+
+function editFAQ(index) {
+    const e = entries[index];
+    document.getElementById('editQuestion').value = e.question;
+    document.getElementById('editAnswer').value = e.answer;
+    document.getElementById('editForm').action = '/faq/edit/' + index;
+    document.getElementById('editModal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('editModal').classList.remove('active');
+}
+
+document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+</script>
+{% endblock %}

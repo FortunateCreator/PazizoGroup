@@ -1,0 +1,316 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://pazizoenergy.com/#business",
+      "name": "Pazizo Energy",
+      "alternateName": [
+        "Pazizo Energy Nigeria",
+        "Pazizo Group Energy Division"
+      ],
+      "description": "Pazizo Energy is Nigeria's reliable diesel supply company since 2014, delivering bulk diesel (AGO) to all 36 states including Lagos, Abuja FCT, and nationwide. We supply wholesale diesel for generators, industrial diesel for factories, diesel for telecom towers, banks, hotels, and hospitals. GPS-tracked fleet, quality-assured fuel, competitive diesel supply contracts Nigeria.",
+      "url": "https://pazizoenergy.com",
+      "logo": "https://pazizoenergy.com/logo.png",
+      "image": "https://pazizoenergy.com/hero-image.jpg",
+      "telephone": "+234-XXX-XXX-XXXX",
+      "email": "info@pazizoenergy.com",
+      "foundingDate": "2014",
+      "foundingLocation": {
+        "@type": "Place",
+        "name": "Lagos, Nigeria"
+      },
+      "areaServed": [
+        {
+          "@type": "Country",
+          "name": "Nigeria",
+          "containsPlace": [
+            {
+              "@type": "State",
+              "name": "Lagos State"
+            },
+            {
+              "@type": "State",
+              "name": "Federal Capital Territory",
+              "alternateName": "Abuja FCT"
+            },
+            {
+              "@type": "State",
+              "name": "Abia State"
+            },
+            {
+              "@type": "State",
+              "name": "Adamawa State"
+            },
+            {
+              "@type": "State",
+              "name": "Akwa Ibom State"
+            },
+            {
+              "@type": "State",
+              "name": "Anambra State"
+            },
+            {
+              "@type": "State",
+              "name": "Bauchi State"
+            },
+            {
+              "@type": "State",
+              "name": "Bayelsa State"
+            },
+            {
+              "@type": "State",
+              "name": "Benue State"
+            },
+            {
+              "@type": "State",
+              "name": "Borno State"
+            },
+            {
+              "@type": "State",
+              "name": "Cross River State"
+            },
+            {
+              "@type": "State",
+              "name": "Delta State"
+            },
+            {
+              "@type": "State",
+              "name": "Ebonyi State"
+            },
+            {
+              "@type": "State",
+              "name": "Edo State"
+            },
+            {
+              "@type": "State",
+              "name": "Ekiti State"
+            },
+            {
+              "@type": "State",
+              "name": "Enugu State"
+            },
+            {
+              "@type": "State",
+              "name": "Gombe State"
+            },
+            {
+              "@type": "State",
+              "name": "Imo State"
+            },
+            {
+              "@type": "State",
+              "name": "Jigawa State"
+            },
+            {
+              "@type": "State",
+              "name": "Kaduna State"
+            },
+            {
+              "@type": "State",
+              "name": "Kano State"
+            },
+            {
+              "@type": "State",
+              "name": "Katsina State"
+            },
+            {
+              "@type": "State",
+              "name": "Kebbi State"
+            },
+            {
+              "@type": "State",
+              "name": "Kogi State"
+            },
+            {
+              "@type": "State",
+              "name": "Kwara State"
+            },
+            {
+              "@type": "State",
+              "name": "Nasarawa State"
+            },
+            {
+              "@type": "State",
+              "name": "Niger State"
+            },
+            {
+              "@type": "State",
+              "name": "Ogun State"
+            },
+            {
+              "@type": "State",
+              "name": "Ondo State"
+            },
+            {
+              "@type": "State",
+              "name": "Osun State"
+            },
+            {
+              "@type": "State",
+              "name": "Oyo State"
+            },
+            {
+              "@type": "State",
+              "name": "Plateau State"
+            },
+            {
+              "@type": "State",
+              "name": "Rivers State"
+            },
+            {
+              "@type": "State",
+              "name": "Sokoto State"
+            },
+            {
+              "@type": "State",
+              "name": "Taraba State"
+            },
+            {
+              "@type": "State",
+              "name": "Yobe State"
+            },
+            {
+              "@type": "State",
+              "name": "Zamfara State"
+            }
+          ]
+        }
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Pazizo Group Headquarters",
+        "addressLocality": "Lagos",
+        "addressRegion": "Lagos State",
+        "addressCountry": "NG",
+        "postalCode": "100001"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "6.5244",
+        "longitude": "3.3792"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Diesel Supply Services Nigeria",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Bulk Diesel Supply Nigeria",
+              "description": "Wholesale bulk Automotive Gas Oil (AGO) supply for industrial, commercial, and institutional clients across all 36 states of Nigeria and the FCT."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Diesel Supply Contracts Nigeria",
+              "description": "Long-term diesel supply agreements with guaranteed volumes, scheduled deliveries, and competitive pricing for corporate and industrial clients."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Emergency Diesel Delivery Nigeria",
+              "description": "24/7 rapid-response diesel delivery for critical infrastructure — hospitals, telecom towers, data centers, and factories nationwide."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Industrial Diesel Supply Nigeria",
+              "description": "Reliable diesel supply for factories, manufacturing plants, agro-processing facilities, and heavy industrial operations."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Diesel for Generators Nigeria",
+              "description": "Quality-assured AGO for standby and prime power generators powering banks, telecom towers, hotels, hospitals, and commercial buildings."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Nationwide Diesel Logistics Nigeria",
+              "description": "GPS-tracked tanker fleet delivering diesel to all 36 states including Lagos, Abuja, Port Harcourt, Kano, Enugu, and remote regions."
+            }
+          }
+        ]
+      },
+      "parentOrganization": {
+        "@type": "Organization",
+        "@id": "https://pazizogroup.com/#organization",
+        "name": "Pazizo Group",
+        "url": "https://pazizogroup.com"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/company/pazizo-energy",
+        "https://twitter.com/pazizoenergy",
+        "https://www.instagram.com/pazizoenergy"
+      ],
+      "keywords": "diesel supply Nigeria, bulk diesel, AGO Nigeria, Pazizo Energy, diesel logistics Nigeria, diesel delivery all 36 states, reliable diesel supplier Nigeria, wholesale diesel Lagos, diesel Abuja, industrial diesel Nigeria, diesel for generators, diesel supply contract Nigeria, diesel for industries Nigeria, Nigeria diesel company since 2014",
+      "makesOffer": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Product",
+            "name": "Automotive Gas Oil (AGO) — Diesel",
+            "description": "Quality-assured bulk diesel meeting SON and DPR specifications, available for delivery across all 36 states of Nigeria and the Federal Capital Territory (FCT), Abuja."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://pazizoenergy.com/#bright-pazizo",
+      "name": "Bright",
+      "alternateName": "Bright Pazizo",
+      "givenName": "Bright",
+      "jobTitle": "Co-Founder & Operations Director",
+      "description": "Bright is the Co-Founder and Operations Director of Pazizo Energy, the diesel supply and logistics division of Pazizo Group. Since founding the company in 2014, Bright has built Pazizo Energy into a nationwide diesel logistics powerhouse — delivering quality-assured bulk diesel (AGO) to all 36 states of Nigeria and the FCT. A Nigerian entrepreneur and logistics strategist, Bright is known for operational excellence, nationwide coverage, and building Nigeria's most reliable diesel supply company.",
+      "url": "https://pazizoenergy.com/about/bright",
+      "image": "https://pazizoenergy.com/bright-pazizo.jpg",
+      "worksFor": {
+        "@type": "Organization",
+        "@id": "https://pazizoenergy.com/#business",
+        "name": "Pazizo Energy"
+      },
+      "memberOf": {
+        "@type": "Organization",
+        "@id": "https://pazizogroup.com/#organization",
+        "name": "Pazizo Group"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/in/bright-pazizo",
+        "https://twitter.com/brightpazizo"
+      ],
+      "knowsAbout": [
+        "Diesel Supply Nigeria",
+        "Bulk Diesel Logistics",
+        "AGO Distribution Nigeria",
+        "Petroleum Logistics",
+        "Nigerian Energy Sector",
+        "Industrial Diesel Supply",
+        "Fleet Management",
+        "Supply Chain Management Nigeria"
+      ],
+      "nationality": {
+        "@type": "Country",
+        "name": "Nigeria"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Lagos",
+        "addressRegion": "Lagos State",
+        "addressCountry": "NG"
+      }
+    }
+  ]
+}

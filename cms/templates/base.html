@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Pazizo CMS{% endblock %}</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface2: #334155;
+            --border: #475569;
+            --text: #e2e8f0;
+            --text2: #94a3b8;
+            --accent: #f59e0b;
+            --accent2: #d97706;
+            --green: #10b981;
+            --red: #ef4444;
+            --blue: #3b82f6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        nav {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            height: 56px;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav .brand {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        nav a {
+            color: var(--text2);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.15s;
+        }
+        nav a:hover, nav a.active { color: var(--text); }
+        nav .spacer { flex: 1; }
+        nav .logout { color: var(--red); font-size: 13px; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+        .page-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .page-subtitle { color: var(--text2); margin-bottom: 24px; font-size: 14px; }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .stat-label {
+            color: var(--text2);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        .btn:hover { background: var(--border); }
+        .btn-primary { background: var(--accent); color: #000; border-color: var(--accent); }
+        .btn-primary:hover { background: var(--accent2); }
+        .btn-danger { background: transparent; color: var(--red); border-color: var(--red); }
+        .btn-danger:hover { background: var(--red); color: #fff; }
+        .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+        /* Forms */
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        textarea { min-height: 200px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; }
+        textarea.large { min-height: 500px; }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text2);
+        }
+        .form-group { margin-bottom: 16px; }
+
+        /* Flash messages */
+        .flash {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        .flash-success { background: #064e3b; color: #6ee7b7; border: 1px solid #065f46; }
+        .flash-error { background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        th { color: var(--text2); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        tr:hover { background: var(--surface2); }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-green { background: #064e3b; color: #6ee7b7; }
+        .badge-blue { background: #1e3a5f; color: #93c5fd; }
+        .badge-yellow { background: #422006; color: #fcd34d; }
+
+        /* Links */
+        a { color: var(--accent); }
+
+        /* Preview */
+        .preview-box {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            line-height: 1.7;
+        }
+        .preview-box h1 { font-size: 24px; margin-bottom: 12px; }
+        .preview-box h2 { font-size: 20px; margin: 16px 0 8px; color: var(--accent); }
+        .preview-box h3 { font-size: 16px; margin: 12px 0 6px; }
+        .preview-box p { margin-bottom: 10px; }
+        .preview-box ul, .preview-box ol { margin: 8px 0; padding-left: 24px; }
+        .preview-box li { margin-bottom: 4px; }
+        .preview-box table { margin: 12px 0; }
+        .preview-box code {
+            background: var(--surface2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .preview-box pre {
+            background: var(--surface2);
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .preview-box blockquote {
+            border-left: 3px solid var(--accent);
+            padding-left: 16px;
+            color: var(--text2);
+            margin: 12px 0;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text2);
+            border: none;
+            background: transparent;
+        }
+        .tab.active, .tab:hover { color: var(--accent); background: var(--surface2); }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Keyword analysis */
+        .kw-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--accent);
+            margin-top: 4px;
+        }
+        .kw-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .kw-count {
+            background: var(--surface2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 28px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    {% if session.get("logged_in") %}
+    <nav>
+        <a href="/" class="brand">⚡ Pazizo CMS</a>
+        <a href="/" class="{{ 'active' if request.path == '/' }}">Dashboard</a>
+        <a href="/editor/bio" class="{{ 'active' if 'editor' in request.path }}">Editors</a>
+        <a href="/faq" class="{{ 'active' if 'faq' in request.path }}">FAQ</a>
+        <a href="/social" class="{{ 'active' if 'social' in request.path }}">Social</a>
+        <a href="/seo" class="{{ 'active' if 'seo' in request.path }}">SEO Tools</a>
+        <span class="spacer"></span>
+        <a href="/logout" class="logout">Logout</a>
+    </nav>
+    {% endif %}
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+         {% if inline_content %}{{ inline_content|safe }}{% endif %}
+        </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

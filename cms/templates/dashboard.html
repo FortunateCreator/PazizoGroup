@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Pazizo CMS{% endblock %}
+{% block content %}
+<h1 class="page-title">Dashboard</h1>
+<p class="page-subtitle">Bright & Pazizo Energy — Content Management Hub</p>
+
+<div style="margin-bottom:24px;display:flex;gap:12px;flex-wrap:wrap">
+  <a href="/landing" target="_blank" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--amber);color:#000;border-radius:8px;text-decoration:none;font-weight:600;font-size:.85rem">🚀 View New Landing Page</a>
+</div>
+
+<!-- Stats -->
+<div class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); margin-bottom: 24px;">
+    {% set total_files = content.values()|selectattr('size_kb', 'gt', 0)|list|length %}
+    {% set total_words = content.values()|sum(attribute='word_count') %}
+    <div class="stat-card">
+        <div class="stat-value">{{ total_files }}</div>
+        <div class="stat-label">Content Files</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ total_words }}</div>
+        <div class="stat-label">Total Words</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color: var(--green);">5.0%</div>
+        <div class="stat-label">Keyword Density</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color: var(--blue);">72h</div>
+        <div class="stat-label">Auto-Content Cycle</div>
+    </div>
+</div>
+
+<!-- Profile Photo Card -->
+<div class="card" style="margin-bottom: 24px;">
+    <div class="card-title">👤 Bright's Profile Photo</div>
+    <div style="display: flex; align-items: center; gap: 20px;">
+        {% set profile_img = get_profile_image() %}
+        {% if profile_img %}
+        <img src="{{ profile_img }}" alt="Bright's Profile" style="width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent);">
+        <span style="color: var(--green);">✅ Profile photo set</span>
+        {% else %}
+        <div style="width: 96px; height: 96px; border-radius: 50%; background: var(--surface2); border: 3px dashed var(--border); display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--text2);">📷</div>
+        <span style="color: var(--text2);">No profile photo uploaded</span>
+        {% endif %}
+        <a href="/upload" class="btn">{% if profile_img %}Change{% else %}Upload{% endif %} Photo</a>
+    </div>
+</div>
+
+<!-- Content Cards -->
+<h2 style="font-size: 18px; margin-bottom: 16px; color: var(--text2);">📄 Content Files</h2>
+<div class="card-grid">
+    {% for key, info in content.items() %}
+    <div class="card">
+        <div class="card-title">
+            {% if key == 'bio' %}📝 Biography
+            {% elif key == 'linkedin' %}💼 LinkedIn Profile
+            {% elif key == 'google_business' %}📍 Google Business
+            {% elif key == 'social' %}📱 Social Media Posts
+            {% elif key == 'investor' %}💰 Investor Pitch
+            {% elif key == 'press' %}📰 Press Release
+            {% elif key == 'faq' %}❓ FAQ
+            {% elif key == 'structured_data' %}🔧 Structured Data (JSON-LD)
+            {% else %}{{ key }}
+            {% endif %}
+        </div>
+        <div style="font-size: 13px; color: var(--text2); margin-bottom: 12px;">
+            <span class="badge badge-{{ 'green' if info.size_kb > 0 else 'yellow' }}">{{ info.size_kb }} KB</span>
+            <span style="margin-left: 8px;">{{ info.word_count }} words</span>
+            <span style="margin-left: 8px;">{{ info.modified }}</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            {% if key in ('faq',) %}
+                <a href="/faq" class="btn btn-sm">Manage FAQ</a>
+            {% elif key in ('social',) %}
+                <a href="/social" class="btn btn-sm">Manage Posts</a>
+            {% else %}
+                <a href="/editor/{{ key }}" class="btn btn-sm">Edit</a>
+            {% endif %}
+            <a href="/preview/{{ key }}" class="btn btn-sm">Preview</a>
+            <button class="btn btn-sm" onclick="analyzeContent('{{ key }}')">📊 Analyze</button>
+        </div>
+        <div id="kw-{{ key }}" style="margin-top: 8px; font-size: 12px;"></div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Quick Links -->
+<div class="card" style="margin-top: 24px;">
+    <div class="card-title">⚙️ Quick Actions</div>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="/seo" class="btn">🔍 SEO Tools</a>
+        <a href="/editor/bio" class="btn btn-primary">Edit Biography</a>
+        <a href="/faq" class="btn">Manage FAQs</a>
+        <a href="/social" class="btn">Social Posts</a>
+        <a href="/preview/bio" class="btn">Preview Bio</a>
+        <a href="/upload" class="btn">📷 Upload Photo</a>
+        <a href="/email" class="btn">📧 Email Content</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function analyzeContent(type) {
+    const el = document.getElementById('kw-' + type);
+    el.innerHTML = '<span style="color: var(--text2);">Analyzing...</span>';
+    try {
+        const resp = await fetch('/api/analyze/' + type);
+        const data = await resp.json();
+        const top = data.hits.slice(0, 5);
+        el.innerHTML = top.map(h =>
+            `<span style="display:inline-block;margin:2px 4px;background:var(--surface2);padding:2px 8px;border-radius:8px;">${h.keyword} <strong>×${h.hits}</strong></span>`
+        ).join('');
+    } catch(e) {
+        el.innerHTML = '<span style="color: var(--red);">Error</span>';
+    }
+}
+</script>
+{% endblock %}

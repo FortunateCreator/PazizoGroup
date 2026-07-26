@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}SEO Tools — Pazizo CMS{% endblock %}
+{% block content %}
+<h1 class="page-title">🔍 SEO Tools</h1>
+<p class="page-subtitle">Keyword analysis, density checker, and content optimization tools</p>
+
+<div class="card-grid">
+    <!-- Keyword Analyzer -->
+    <div class="card" style="grid-column: span 2;">
+        <div class="card-title">📊 Keyword Analyzer</div>
+        <p style="color: var(--text2); font-size: 13px; margin-bottom: 12px;">
+            Paste any content to check keyword density against the 16 target keywords
+        </p>
+        <div class="form-group">
+            <textarea id="analyze-input" rows="6" placeholder="Paste your content here to analyze keyword density..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="analyze()">Analyze Keywords</button>
+        <div id="analyze-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- Target Keywords -->
+    <div class="card">
+        <div class="card-title">🎯 Target Keywords (16)</div>
+        <div style="font-size: 12px; color: var(--text2);">
+            <ol style="padding-left: 16px; line-height: 2;">
+                <li>diesel supply Nigeria</li>
+                <li>bulk diesel</li>
+                <li>AGO Nigeria</li>
+                <li>Pazizo Energy</li>
+                <li>Pazizo Group</li>
+                <li>Bright Pazizo</li>
+                <li>diesel logistics Nigeria</li>
+                <li>diesel delivery all 36 states</li>
+                <li>reliable diesel supplier Nigeria</li>
+                <li>wholesale diesel Lagos</li>
+                <li>diesel Abuja</li>
+                <li>industrial diesel Nigeria</li>
+                <li>diesel for generators</li>
+                <li>diesel supply contract Nigeria</li>
+                <li>diesel for industries Nigeria</li>
+                <li>Nigeria diesel company since 2014</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Quick Content Analysis -->
+    <div class="card">
+        <div class="card-title">⚡ Quick Content Check</div>
+        <p style="color: var(--text2); font-size: 13px; margin-bottom: 12px;">Analyze existing content files</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="btn btn-sm" onclick="quickAnalyze('bio')">📝 Biography</button>
+            <button class="btn btn-sm" onclick="quickAnalyze('linkedin')">💼 LinkedIn Profile</button>
+            <button class="btn btn-sm" onclick="quickAnalyze('investor')">💰 Investor Pitch</button>
+            <button class="btn btn-sm" onclick="quickAnalyze('press')">📰 Press Release</button>
+            <button class="btn btn-sm" onclick="quickAnalyze('social')">📱 Social Posts</button>
+            <button class="btn btn-sm" onclick="quickAnalyze('faq')">❓ FAQ</button>
+        </div>
+        <div id="quick-results" style="margin-top: 12px;"></div>
+    </div>
+
+    <!-- Content Generator Help -->
+    <div class="card">
+        <div class="card-title">🤖 Auto-Content Engine</div>
+        <p style="color: var(--text2); font-size: 13px; margin-bottom: 12px;">
+            A cron job generates fresh social content every 72 hours with rotating keywords.
+        </p>
+        <table>
+            <tr><td style="color: var(--text2);">Job ID</td><td><code>a8e7ce4cf53e</code></td></tr>
+            <tr><td style="color: var(--text2);">Schedule</td><td>Every 72 hours</td></tr>
+            <tr><td style="color: var(--text2);">Status</td><td><span class="badge badge-green">Active</span></td></tr>
+            <tr><td style="color: var(--text2);">Output</td><td>3-5 keyword-rotated posts</td></tr>
+        </table>
+    </div>
+</div>
+
+<script>
+async function analyze() {
+    const text = document.getElementById('analyze-input').value;
+    if (!text.trim()) return;
+    const el = document.getElementById('analyze-results');
+    el.innerHTML = '<span style="color: var(--text2);">Analyzing...</span>';
+    try {
+        const resp = await fetch('/seo/analyze', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'content=' + encodeURIComponent(text)
+        });
+        const data = await resp.json();
+        const densityColor = data.density < 3 ? 'var(--red)' : data.density > 10 ? 'var(--red)' : 'var(--green)';
+        el.innerHTML = `
+            <div style="margin-bottom: 12px;">
+                <span style="font-weight: 600;">${data.word_count} words</span> ·
+                <span style="font-weight: 600;">${data.total_hits} hits</span> ·
+                <span style="font-weight: 600; color: ${densityColor};">${data.density}% density</span>
+            </div>
+            ${data.hits.map(h => `
+                <div class="kw-row">
+                    <span>${h.keyword}</span>
+                    <span class="kw-count">${h.hits}</span>
+                </div>
+            `).join('')}
+            ${data.hits.length === 0 ? '<p style="color: var(--text2);">No keywords found. Add some from the target list.</p>' : ''}
+        `;
+    } catch(e) {
+        el.innerHTML = '<span style="color: var(--red);">Error</span>';
+    }
+}
+
+async function quickAnalyze(type) {
+    const el = document.getElementById('quick-results');
+    el.innerHTML = '<span style="color: var(--text2);">Loading...</span>';
+    try {
+        const resp = await fetch('/api/analyze/' + type);
+        const data = await resp.json();
+        el.innerHTML = `
+            <div style="font-size: 13px; margin-bottom: 8px;">
+                <strong>${type}</strong>: ${data.word_count} words · ${data.total_hits} hits · <span style="color: ${data.density < 3 ? 'var(--red)' : 'var(--green)'};">${data.density}%</span>
+            </div>
+            ${data.hits.slice(0, 5).map(h => `
+                <div style="font-size: 12px; color: var(--text2);">${h.keyword} ×${h.hits}</div>
+            `).join('')}
+        `;
+    } catch(e) {
+        el.innerHTML = '<span style="color: var(--red);">Error</span>';
+    }
+}
+</script>
+{% endblock %}

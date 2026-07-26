@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Login — Pazizo CMS{% endblock %}
+{% block content %}
+<div style="max-width: 400px; margin: 80px auto;">
+    <div class="card" style="text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 12px;">⚡</div>
+        <h1 style="font-size: 22px; margin-bottom: 4px;">Pazizo CMS</h1>
+        <p style="color: var(--text2); font-size: 14px; margin-bottom: 24px;">Bright & Pazizo Energy Content Hub</p>
+        <form method="POST">
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Enter password" required autofocus
+                       style="text-align: center; font-size: 16px; padding: 12px;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
+                Sign In
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
