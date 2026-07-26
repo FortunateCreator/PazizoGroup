@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Preview: {{ content_type }} — Pazizo CMS{% endblock %}
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <div>
+        <h1 class="page-title" style="margin-bottom: 0;">👁 Preview: {{ content_type }}</h1>
+        <p class="page-subtitle" style="margin-bottom: 0;">Rendered content as it will appear</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+        <a href="/editor/{{ content_type }}" class="btn">✏️ Edit</a>
+        <a href="/" class="btn">← Dashboard</a>
+        <button class="btn" onclick="window.open('/preview/{{ content_type }}', '_blank')">↗ New Tab</button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="preview-box">
+        {{ html|safe }}
+    </div>
+</div>
+
+{% if raw %}
+<details style="margin-top: 16px;">
+    <summary style="cursor: pointer; color: var(--text2); font-size: 13px; padding: 8px;">View Raw Source</summary>
+    <pre style="background: var(--bg); padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; margin-top: 8px;">{{ raw }}</pre>
+</details>
+{% endif %}
+{% endblock %}

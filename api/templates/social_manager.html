@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Social Media Manager — Pazizo CMS{% endblock %}
+{% block content %}
+<h1 class="page-title">📱 Social Media Manager</h1>
+<p class="page-subtitle">{{ posts|length }} posts — Platform-ready content for LinkedIn, Twitter/X, Instagram</p>
+
+<!-- Quick Filters -->
+<div class="tabs" style="margin-bottom: 20px;">
+    <button class="tab active" onclick="filterPosts('all')">All</button>
+    <button class="tab" onclick="filterPosts('LinkedIn')">LinkedIn</button>
+    <button class="tab" onclick="filterPosts('Twitter')">Twitter/X</button>
+    <button class="tab" onclick="filterPosts('Instagram')">Instagram</button>
+</div>
+
+<!-- Add new post -->
+<div class="card">
+    <div class="card-title">+ New Social Post</div>
+    <form method="POST" action="/social/add">
+        <div style="display: flex; gap: 12px; align-items: end;">
+            <div class="form-group" style="min-width: 160px;">
+                <label>Platform</label>
+                <select name="platform">
+                    <option value="LinkedIn">LinkedIn</option>
+                    <option value="Twitter">Twitter/X</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="General">General (Multi-platform)</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>Post Content (include hashtags)</label>
+                <textarea name="content" rows="3" placeholder="Write your post here..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-bottom: 16px;">Post</button>
+        </div>
+    </form>
+</div>
+
+<!-- Posts grid -->
+<div class="card-grid">
+    {% for post in posts %}
+    <div class="card post-card" data-platform="{{ post.platform }}">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span class="badge badge-{{ 'blue' if post.platform == 'LinkedIn' else 'green' if post.platform == 'Twitter' else 'yellow' }}">
+                {{ post.platform }}
+            </span>
+            <span style="font-size: 12px; color: var(--text2);">Post #{{ post.number }}</span>
+        </div>
+        <div style="font-size: 14px; line-height: 1.5; margin-bottom: 12px; max-height: 150px; overflow-y: auto;">
+            {{ post.content[:280] }}{% if post.content|length > 280 %}...{% endif %}
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn btn-sm" onclick="editPost({{ loop.index0 }})">Edit</button>
+            <button class="btn btn-sm" onclick="copyPost('{{ post.content|replace("'", "\\'")|replace('\n', '\\n') }}')">📋 Copy</button>
+            <form method="POST" action="/social/delete/{{ loop.index0 }}" style="display: inline;"
+                  onsubmit="return confirm('Delete this post?')">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if not posts %}
+<div class="card" style="text-align: center; padding: 48px; color: var(--text2);">
+    <div style="font-size: 48px; margin-bottom: 12px;">📱</div>
+    <p>No social posts yet. Create your first one above!</p>
+</div>
+{% endif %}
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <h3 style="margin-bottom: 16px;">Edit Post</h3>
+        <form id="editForm" method="POST">
+            <div class="form-group">
+                <label>Platform</label>
+                <select name="platform" id="editPlatform">
+                    <option value="LinkedIn">LinkedIn</option>
+                    <option value="Twitter">Twitter/X</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="General">General (Multi-platform)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea name="content" id="editContent" rows="4" required></textarea>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const posts = {{ posts|tojson }};
+
+function filterPosts(platform) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('.post-card').forEach(card => {
+        card.style.display = (platform === 'all' || card.dataset.platform === platform) ? '' : 'none';
+    });
+}
+
+function editPost(index) {
+    const p = posts[index];
+    document.getElementById('editPlatform').value = p.platform;
+    document.getElementById('editContent').value = p.content;
+    document.getElementById('editForm').action = '/social/edit/' + index;
+    document.getElementById('editModal').classList.add('active');
+}
+
+function copyPost(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Post copied to clipboard!');
+    });
+}
+
+function closeModal() {
+    document.getElementById('editModal').classList.remove('active');
+}
+document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+</script>
+{% endblock %}

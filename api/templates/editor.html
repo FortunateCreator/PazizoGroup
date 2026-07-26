@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Editor: {{ content_type }} — Pazizo CMS{% endblock %}
+{% block content %}
+<h1 class="page-title">Editor: <span style="color: var(--accent);">{{ content_type }}</span></h1>
+<p class="page-subtitle">
+    {{ info.word_count }} words · {{ info.size_kb }} KB · Last modified: {{ info.modified }}
+    <span style="margin-left: 12px;"><a href="/preview/{{ content_type }}" target="_blank" class="btn btn-sm">Open Preview</a></span>
+</p>
+
+<form method="POST">
+    <div class="form-group">
+        <textarea name="content" class="large" id="editor-area"
+                  style="font-family: {{ 'monospace' if is_json else 'system-ui, sans-serif' }};"
+        >{{ content }}</textarea>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+        <button type="submit" class="btn btn-primary" style="padding: 10px 24px;">💾 Save Changes</button>
+        <button type="button" class="btn" onclick="analyzeCurrent()">📊 Analyze Keywords</button>
+        <a href="/preview/{{ content_type }}" target="_blank" class="btn">👁 Preview</a>
+        <a href="/export/{{ content_type }}" class="btn">📄 Export PDF</a>
+        <a href="/email" class="btn">📧 Email Content</a>
+        <a href="/" class="btn">← Back</a>
+    </div>
+</form>
+<div id="kw-results" style="margin-top: 16px;"></div>
+
+<script>
+async function analyzeCurrent() {
+    const text = document.getElementById('editor-area').value;
+    const el = document.getElementById('kw-results');
+    el.innerHTML = '<span style="color: var(--text2);">Analyzing...</span>';
+    try {
+        const resp = await fetch('/seo/analyze', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'content=' + encodeURIComponent(text)
+        });
+        const data = await resp.json();
+        el.innerHTML = `
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-title">📊 Keyword Analysis</div>
+                <p style="color: var(--text2); font-size: 14px; margin-bottom: 12px;">
+                    ${data.word_count} words · ${data.total_hits} keyword hits · <strong>${data.density}% density</strong>
+                    ${data.density < 3 ? '<span style="color: var(--red);"> ⚠ Low density — add more keywords</span>' :
+                      data.density > 10 ? '<span style="color: var(--red);"> ⚠ High density — may look spammy</span>' :
+                      '<span style="color: var(--green);"> ✅ Good density</span>'}
+                </p>
+                ${data.hits.map(h => `
+                    <div class="kw-row">
+                        <span>${h.keyword}</span>
+                        <span class="kw-count">${h.hits}</span>
+                    </div>
+                `).join('')}
+                ${data.hits.length === 0 ? '<p style="color: var(--text2);">No target keywords found in this content.</p>' : ''}
+            </div>`;
+    } catch(e) {
+        el.innerHTML = '<span style="color: var(--red);">Error analyzing content</span>';
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Upload Photo — Pazizo CMS{% endblock %}
+{% block content %}
+<h1 class="page-title">📷 Upload Profile Photo</h1>
+<p class="page-subtitle">Upload Bright's profile photo</p>
+<div class="card" style="text-align:center;padding:32px">
+  {% if profile_img %}
+  <img src="{{ profile_img }}" style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin-bottom:16px;border:2px solid var(--amber)">
+  {% endif %}
+  <form method="POST" enctype="multipart/form-data">
+    <input type="file" name="image" accept="image/*" required style="margin-bottom:12px">
+    <button type="submit" style="padding:10px 24px;background:var(--amber);color:#000;border:none;border-radius:6px;font-weight:600;cursor:pointer">Upload</button>
+  </form>
+</div>
+{% endblock %}
